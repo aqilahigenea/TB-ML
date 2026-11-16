@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Tombol Kembali -->
+<div class="mb-3">
+    <a href="/" class="text-decoration-none text-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard Utama
+    </a>
+</div>
+
+<!-- Header Detail Puskesmas -->
+<div class="card border-0 shadow-sm p-4 bg-white rounded-3 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+        <div>
+            <div class="text-secondary small fw-bold mb-1">PROFIL WILAYAH PUSKESMAS</div>
+            <h2 class="fw-bold text-primary mb-1">{{ p['Puskesmas'] }}</h2>
+            <p class="text-muted mb-0"><i class="bi bi-geo-alt me-1"></i>Kecamatan: <strong>{{ p['Kecamatan'] }}</strong></p>
+        </div>
+        <div class="mt-3 mt-md-0 text-md-end">
+            <span class="fs-4 fw-bold d-block">Peringkat #{{ p['Peringkat_Urgensi'] }}</span>
+            <small class="text-muted">dari 24 Puskesmas di Kota Padang</small>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <!-- Kolom Kiri: Status & Urgensi -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-3 h-100">
+            <h5 class="fw-bold text-dark mb-3">Status Prioritas</h5>
+            
+            <div class="mb-3">
+                <label class="text-muted small d-block">Tingkat Urgensi Kebijakan:</label>
+                {% if 'Tingkat 1' in p['Tingkat_Urgensi'] %}
+                    <span class="badge badge-t1 fs-6 px-3 py-2">Tingkat 1 - Sangat Tinggi</span>
+                {% elif 'Tingkat 2' in p['Tingkat_Urgensi'] %}
+                    <span class="badge badge-t2 fs-6 px-3 py-2">Tingkat 2 - Sedang</span>
+                {% else %}
+                    <span class="badge badge-t3 fs-6 px-3 py-2">Tingkat 3 - Rutin</span>
+                {% endif %}
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Skor Urgensi Komposit:</label>
+                <span class="fs-3 fw-bold {% if p['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
+                    {{ p['Skor_Urgensi'] }}
+                </span>
+                <small class="text-muted d-block">(Rata-rata Z-Score 5 Indikator)</small>
+            </div>
+
+            <div class="mb-3">
+                <label class="text-muted small d-block">Status Kepastian Anggota:</label>
+                {% if p['Status_Kepastian'] == 'Pasti' %}
+                    <span class="badge bg-primary px-3 py-1">Pasti (Stabil)</span>
+                {% else %}
+                    <span class="badge bg-secondary px-3 py-1">Belum pasti (Perbatasan)</span>
+                {% endif %}
+            </div>
+
+            <div>
+                <label class="text-muted small d-block">Profil Klaster K-Means:</label>
+                <strong class="text-dark">{{ p['Kelompok_Prioritas'] }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kolom Kanan: 5 Indikator vs Rerata Kota -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-3 h-100">
+            <h5 class="fw-bold text-dark mb-3">Capaian 5 Indikator Utama vs Rata-rata Kota Padang</h5>
+            <div class="table-responsive">
+                <table class="table table-bordered align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Indikator</th>
+                            <th class="text-end">Nilai Puskesmas</th>
+                            <th class="text-end">Rerata Kota</th>
+                            <th>Status Deviasi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="fw-bold">Kasus per sasaran balita</td>
+                            <td class="text-end fw-bold text-primary">{{ p['Kasus per sasaran balita'] }}%</td>
+                            <td class="text-end text-muted">{{ rerata['Kasus per sasaran balita'] }}%</td>
+                            <td>
+                                {% if p['Kasus per sasaran balita'] > rerata['Kasus per sasaran balita'] %}
+                                    <span class="badge bg-danger-subtle text-danger">Di Atas Rata-rata</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success">Di Bawah Rata-rata</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Persen sangat pendek</td>
+                            <td class="text-end fw-bold text-primary">{{ p['Persen sangat pendek'] }}%</td>
+                            <td class="text-end text-muted">{{ rerata['Persen sangat pendek'] }}%</td>
+                            <td>
+                                {% if p['Persen sangat pendek'] > rerata['Persen sangat pendek'] %}
+                                    <span class="badge bg-danger-subtle text-danger">Di Atas Rata-rata</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success">Di Bawah Rata-rata</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Persen stunting + kurus</td>
+                            <td class="text-end fw-bold text-primary">{{ p['Persen stunting + kurus'] }}%</td>
+                            <td class="text-end text-muted">{{ rerata['Persen stunting + kurus'] }}%</td>
+                            <td>
+                                {% if p['Persen stunting + kurus'] > rerata['Persen stunting + kurus'] %}
+                                    <span class="badge bg-danger-subtle text-danger">Di Atas Rata-rata</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success">Di Bawah Rata-rata</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Persen berat tidak naik</td>
+                            <td class="text-end fw-bold text-primary">{{ p['Persen berat tidak naik'] }}%</td>
+                            <td class="text-end text-muted">{{ rerata['Persen berat tidak naik'] }}%</td>
+                            <td>
+                                {% if p['Persen berat tidak naik'] > rerata['Persen berat tidak naik'] %}
+                                    <span class="badge bg-danger-subtle text-danger">Di Atas Rata-rata</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success">Di Bawah Rata-rata</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold">Persen bumil KEK</td>
+                            <td class="text-end fw-bold text-primary">{{ p['Persen bumil KEK'] }}%</td>
+                            <td class="text-end text-muted">{{ rerata['Persen bumil KEK'] }}%</td>
+                            <td>
+                                {% if p['Persen bumil KEK'] > rerata['Persen bumil KEK'] %}
+                                    <span class="badge bg-danger-subtle text-danger">Di Atas Rata-rata</span>
+                                {% else %}
+                                    <span class="badge bg-success-subtle text-success">Di Bawah Rata-rata</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Usulan Kebijakan Manajerial -->
+<div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+    <h5 class="fw-bold text-dark mb-2"><i class="bi bi-lightbulb-fill text-warning me-2"></i>Rekomendasi Intervensi Manajerial</h5>
+    <p class="text-secondary mb-0">{{ p['Usulan_Kebijakan'] }}</p>
+</div>
+
+{% endblock %}

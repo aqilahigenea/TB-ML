@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8 col-md-10">
+
+        <!-- Tombol Kembali -->
+        <div class="mb-3">
+            <a href="/" class="text-decoration-none text-secondary">
+                <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard Utama
+            </a>
+        </div>
+
+        <!-- Kartu Formulir Unggah -->
+        <div class="card border-0 shadow-sm p-4 p-md-5 bg-white rounded-3">
+            <div class="text-center mb-4">
+                <div class="d-inline-flex p-3 bg-primary-subtle text-primary rounded-circle mb-3">
+                    <i class="bi bi-cloud-arrow-up-fill fs-1"></i>
+                </div>
+                <h3 class="fw-bold text-dark">Unggah Data BNBA Bulan Baru</h3>
+                <p class="text-secondary small">
+                    Sistem akan membersihkan data secara otomatis, menghitung 5 indikator puskesmas, dan memetakan tingkat prioritas penanganan.
+                </p>
+            </div>
+
+            <!-- Flash Alert -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm" role="alert">
+                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-4">
+                    <label for="file" class="form-label fw-bold">Pilih Berkas Excel e-PPGBM (.xlsx):</label>
+                    <input class="form-control form-control-lg border-2" type="file" id="file" name="file" accept=".xlsx, .xls" required>
+                </div>
+
+                <div class="card bg-light border-0 p-3 mb-4 rounded-3">
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-check2-circle me-1 text-success"></i>Ketentuan Struktur Berkas:</h6>
+                    <ul class="text-secondary small mb-0 ps-3">
+                        <li>Berkas berformat <strong>.xlsx</strong> dengan lembar kerja (sheet) bernama <code>Application List</code>.</li>
+                        <li>Memuat kolom pencatatan standar: <em>Nama, Tgl Lahir, Pukesmas, Kec, Berat, Tinggi, ZS TB/U, Naik Berat Badan</em>.</li>
+                        <li>Pastikan data berasal dari wilayah <strong>KOTA PADANG</strong>.</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold py-3 shadow-sm">
+                    <i class="bi bi-gear-wide-connected me-2"></i>Proses Data & Prediksi Prioritas
+                </button>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

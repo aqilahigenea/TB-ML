@@ -1,0 +1,21 @@
+# Environments
+venv/
+env/
+ENV/
+.venv/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Temporary uploaded files
+uploads/*
+!uploads/.gitkeep
+
+# OS specific files
+.DS_Store
+Thumbs.db
+
+# Notebook backups
+*.backup.ipynb

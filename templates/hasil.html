@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- Header Hasil -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
+                <div>
+                    <span class="badge bg-success-subtle text-success border border-success mb-2 px-3 py-1">
+                        <i class="bi bi-check-circle-fill me-1"></i>Data Berhasil Diproses
+                    </span>
+                    <h2 class="fw-bold text-dark mb-1">Hasil Pemetaan Periode Baru</h2>
+                    <p class="text-secondary mb-0">Berkas masukan: <code>{{ nama_file }}</code> &bull; Mode inferensi: <strong>Relatif</strong></p>
+                </div>
+                <div class="mt-3 mt-md-0">
+                    <a href="/" class="btn btn-outline-secondary me-2">Dashboard Acuan</a>
+                    <a href="/upload" class="btn btn-primary"><i class="bi bi-cloud-arrow-up-fill me-1"></i>Unggah Lainnya</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Pemantauan Pergeseran Indikator (Drift Monitoring) -->
+<div class="card border-0 shadow-sm mb-4 rounded-3">
+    <div class="card-header bg-white py-3 border-0">
+        <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Pemantauan Pergeseran Indikator (Drift vs Acuan)
+        </h5>
+        <small class="text-muted">Ambang batas deviasi: Waspada (&ge; 0,5 SD), Kritis (&ge; 1,0 SD)</small>
+    </div>
+    <div class="card-body pt-0">
+        <div class="row g-2">
+            {% for d in drift %}
+            <div class="col-md">
+                <div class="card bg-light border-0 p-3 rounded-3">
+                    <div class="text-secondary small text-truncate" title="{{ d.indikator }}">{{ d.indikator }}</div>
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <span class="fs-5 fw-bold text-dark">{{ "%+0.2f"|format(d.pergeseran_sd) }} SD</span>
+                        <span class="badge bg-{{ d.warna }}">{{ d.status }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Tabel Hasil Prediksi Puskesmas -->
+<div class="card border-0 shadow-sm rounded-3">
+    <div class="card-header bg-white py-3 border-0">
+        <h5 class="fw-bold mb-0 text-dark">
+            <i class="bi bi-list-ol me-2 text-primary"></i>Peringkat Urgensi Puskesmas (Bulan Baru)
+        </h5>
+    </div>
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="text-center" style="width: 70px;">Rank</th>
+                        <th>Puskesmas</th>
+                        <th>Kecamatan</th>
+                        <th>Tingkat Urgensi</th>
+                        <th class="text-center">Skor Urgensi</th>
+                        <th>Kasus/Sasaran (%)</th>
+                        <th>Profil K-Means</th>
+                        <th>Usulan Penanganan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h in hasil %}
+                    <tr>
+                        <td class="text-center fw-bold">{{ h['Peringkat_Urgensi'] }}</td>
+                        <td class="fw-bold text-dark">{{ h['Puskesmas'] }}</td>
+                        <td>{{ h['Kecamatan'] }}</td>
+                        <td>
+                            {% if 'Tingkat 1' in h['Tingkat_Urgensi'] %}
+                                <span class="badge badge-t1 px-2 py-1">Tingkat 1 - Sangat Tinggi</span>
+                            {% elif 'Tingkat 2' in h['Tingkat_Urgensi'] %}
+                                <span class="badge badge-t2 px-2 py-1">Tingkat 2 - Sedang</span>
+                            {% else %}
+                                <span class="badge badge-t3 px-2 py-1">Tingkat 3 - Rutin</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-center fw-bold {% if h['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
+                            {{ h['Skor_Urgensi'] }}
+                        </td>
+                        <td class="fw-bold text-primary">{{ h['Kasus per sasaran balita'] }}%</td>
+                        <td><small class="badge bg-light text-dark border">{{ h['Kelompok_Prioritas'].split(' - ')[0] }}</small></td>
+                        <td><small class="text-secondary">{{ h['Usulan_Kebijakan'] }}</small></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
