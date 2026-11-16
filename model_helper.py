@@ -213,8 +213,13 @@ def proses_file_baru(file_path, paket_model):
 def cek_pergeseran_indikator(agg_baru, paket_model):
   """Memantau pergeseran level indikator data baru vs acuan (satuan SD)."""
   fts = paket_model['features']
-  ref_rerata = pd.Series(paket_model['referensi_fitur']['rerata'])
-  ref_std = pd.Series(paket_model['referensi_fitur']['simpangan_baku'])
+  if 'referensi_fitur' in paket_model and paket_model['referensi_fitur']:
+    ref_rerata = pd.Series(paket_model['referensi_fitur']['rerata'])
+    ref_std = pd.Series(paket_model['referensi_fitur']['simpangan_baku'])
+  else:
+    scaler = paket_model['pipeline'].named_steps['scaler']
+    ref_rerata = pd.Series(scaler.mean_, index=fts)
+    ref_std = pd.Series(scaler.scale_, index=fts)
 
   baru_rerata = agg_baru[fts].mean()
   geser = ((baru_rerata - ref_rerata) / ref_std).round(2)
@@ -235,3 +240,62 @@ def cek_pergeseran_indikator(agg_baru, paket_model):
         {'indikator': f, 'pergeseran_sd': val, 'status': status, 'warna': warna}
     )
   return drift_list
+
+
+def prediksi_satu_puskesmas(fitur_input, paket_model):
+  """Memprediksi klaster, skor urgensi, dan rekomendasi untuk 1 puskesmas secara manual."""
+  fts = paket_model['features']
+  # Konversi ke DataFrame berkolom sesuai urutan fitur
+  df_input = pd.DataFrame([[float(fitur_input[f]) for f in fts]], columns=fts)
+
+  # Ambil referensi rata-rata dan simpangan baku acuan kota
+  if 'referensi_fitur' in paket_model and paket_model['referensi_fitur']:
+    ref_rerata = pd.Series(paket_model['referensi_fitur']['rerata'])
+    ref_std = pd.Series(paket_model['referensi_fitur']['simpangan_baku'])
+  else:
+    scaler = paket_model['pipeline'].named_steps['scaler']
+    ref_rerata = pd.Series(scaler.mean_, index=fts)
+    ref_std = pd.Series(scaler.scale_, index=fts)
+
+  # Hitung z-score dan Skor Urgensi Komposit
+  z_scores = ((df_input.iloc[0] - ref_rerata) / ref_std).round(2)
+  skor_urgensi = round(float(z_scores.mean()), 2)
+
+  # Prediksi Klaster dengan Pipeline ML (StandardScaler + KMeans)
+  cluster_id = int(paket_model['pipeline'].predict(df_input)[0])
+  nama_prioritas = paket_model['mapping'].get(
+      cluster_id, f'Prioritas {cluster_id + 1}'
+  )
+
+  # Usulan Kebijakan Manajerial & Ciri Dominan
+  usulan = paket_model.get('rekomendasi', {}).get(nama_prioritas, '-')
+  ciri = paket_model.get('ciri', {}).get(nama_prioritas, '-')
+
+  # Penentuan Tingkat Urgensi
+  if skor_urgensi > 0.20:
+    tingkat_urgensi = 'Tingkat 1 - Sangat Tinggi'
+    warna_tingkat = 'danger'
+  elif skor_urgensi >= -0.20:
+    tingkat_urgensi = 'Tingkat 2 - Sedang'
+    warna_tingkat = 'warning'
+  else:
+    tingkat_urgensi = 'Tingkat 3 - Rutin'
+    warna_tingkat = 'success'
+
+  # Status kepastian
+  status_kepastian = 'Pasti (Stabil)'
+
+  return {
+      'skor_urgensi': skor_urgensi,
+      'cluster_id': cluster_id,
+      'kelompok_prioritas': nama_prioritas,
+      'tingkat_urgensi': tingkat_urgensi,
+      'warna_tingkat': warna_tingkat,
+      'usulan_kebijakan': usulan,
+      'ciri_dominan': ciri,
+      'status_kepastian': status_kepastian,
+      'z_scores': z_scores.to_dict(),
+      'nilai_input': df_input.iloc[0].to_dict(),
+      'rerata_kota': ref_rerata.round(2).to_dict(),
+  }
+

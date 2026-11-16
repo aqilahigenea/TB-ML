@@ -1,100 +1,118 @@
 {% extends 'base.html' %}
+{% block title %}Hasil Pemetaan Baru — RANCAK GIZI{% endblock %}
+
 {% block content %}
 
+<!-- Breadcrumb -->
+<nav class="mb-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color: var(--rg-primary);"><i class="bi bi-grid-1x2-fill me-1"></i>Dashboard</a></li>
+        <li class="breadcrumb-item"><a href="/upload" class="text-decoration-none" style="color: var(--rg-primary);">Unggah Data</a></li>
+        <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Hasil Pemetaan Baru</li>
+    </ol>
+</nav>
+
 <!-- Header Hasil -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                <div>
-                    <span class="badge bg-success-subtle text-success border border-success mb-2 px-3 py-1">
-                        <i class="bi bi-check-circle-fill me-1"></i>Data Berhasil Diproses
-                    </span>
-                    <h2 class="fw-bold text-dark mb-1">Hasil Pemetaan Periode Baru</h2>
-                    <p class="text-secondary mb-0">Berkas masukan: <code>{{ nama_file }}</code> &bull; Mode inferensi: <strong>Relatif</strong></p>
-                </div>
-                <div class="mt-3 mt-md-0">
-                    <a href="/" class="btn btn-outline-secondary me-2">Dashboard Acuan</a>
-                    <a href="/upload" class="btn btn-primary"><i class="bi bi-cloud-arrow-up-fill me-1"></i>Unggah Lainnya</a>
-                </div>
-            </div>
+<div class="card card-saas p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
+        <div>
+            <span class="badge mb-2 px-3 py-1" style="background-color: var(--rg-primary-light); color: var(--rg-primary); border: 1px solid var(--rg-primary-subtle); font-weight: 600;">
+                <i class="bi bi-check-circle-fill me-1 text-success"></i> Data Berhasil Diproses &amp; Dipetakan
+            </span>
+            <h3 class="fw-bold text-dark mb-1">Hasil Pemetaan Prioritas Periode Baru</h3>
+            <p class="text-secondary small mb-0">
+                Nama Berkas: <code class="text-dark bg-light px-2 py-1 rounded">{{ nama_file }}</code> &bull; Mode Inferensi: <strong>Relatif (Z-Score Terstandarisasi)</strong>
+            </p>
+        </div>
+        <div class="d-flex gap-2 flex-shrink-0">
+            <a href="/" class="btn btn-rg-outline d-inline-flex align-items-center">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard Acuan
+            </a>
+            <a href="/upload" class="btn btn-rg-primary d-inline-flex align-items-center">
+                <i class="bi bi-cloud-arrow-up-fill me-1"></i> Unggah Lainnya
+            </a>
         </div>
     </div>
 </div>
 
 <!-- Pemantauan Pergeseran Indikator (Drift Monitoring) -->
-<div class="card border-0 shadow-sm mb-4 rounded-3">
-    <div class="card-header bg-white py-3 border-0">
-        <h5 class="fw-bold mb-0 text-dark">
-            <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Pemantauan Pergeseran Indikator (Drift vs Acuan)
-        </h5>
-        <small class="text-muted">Ambang batas deviasi: Waspada (&ge; 0,5 SD), Kritis (&ge; 1,0 SD)</small>
+<div class="card card-saas p-4 mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-1">
+                <i class="bi bi-activity me-1" style="color: var(--rg-primary);"></i> Pemantauan Pergeseran Indikator (Data Drift vs Acuan Kota)
+            </h6>
+            <div class="text-secondary small">Ambang batas deviasi: Normal (&lt; 0,5 SD) &bull; Waspada (0,5 &ndash; 1,0 SD) &bull; Kritis (&ge; 1,0 SD)</div>
+        </div>
     </div>
-    <div class="card-body pt-0">
-        <div class="row g-2">
-            {% for d in drift %}
-            <div class="col-md">
-                <div class="card bg-light border-0 p-3 rounded-3">
-                    <div class="text-secondary small text-truncate" title="{{ d.indikator }}">{{ d.indikator }}</div>
-                    <div class="d-flex justify-content-between align-items-center mt-2">
-                        <span class="fs-5 fw-bold text-dark">{{ "%+0.2f"|format(d.pergeseran_sd) }} SD</span>
-                        <span class="badge bg-{{ d.warna }}">{{ d.status }}</span>
-                    </div>
+
+    <div class="row g-2">
+        {% for d in drift %}
+        <div class="col-md">
+            <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
+                <div class="text-secondary small text-truncate fw-semibold mb-2" title="{{ d.indikator }}">{{ d.indikator }}</div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="fs-5 fw-bold text-dark">{{ "%+0.2f"|format(d.pergeseran_sd) }} <small class="text-muted fs-6">SD</small></span>
+                    <span class="badge bg-{{ d.warna }}-subtle text-{{ d.warna }} border border-{{ d.warna }}-subtle px-2 py-1">{{ d.status }}</span>
                 </div>
             </div>
-            {% endfor %}
         </div>
+        {% endfor %}
     </div>
 </div>
 
 <!-- Tabel Hasil Prediksi Puskesmas -->
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-header bg-white py-3 border-0">
-        <h5 class="fw-bold mb-0 text-dark">
-            <i class="bi bi-list-ol me-2 text-primary"></i>Peringkat Urgensi Puskesmas (Bulan Baru)
-        </h5>
+<div class="card card-saas p-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-0">
+            Peringkat Urgensi Puskesmas (Bulan Baru)
+        </h6>
+        <span class="text-muted small">Total <strong>{{ hasil|length }}</strong> Puskesmas</span>
     </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-center" style="width: 70px;">Rank</th>
-                        <th>Puskesmas</th>
-                        <th>Kecamatan</th>
-                        <th>Tingkat Urgensi</th>
-                        <th class="text-center">Skor Urgensi</th>
-                        <th>Kasus/Sasaran (%)</th>
-                        <th>Profil K-Means</th>
-                        <th>Usulan Penanganan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for h in hasil %}
-                    <tr>
-                        <td class="text-center fw-bold">{{ h['Peringkat_Urgensi'] }}</td>
-                        <td class="fw-bold text-dark">{{ h['Puskesmas'] }}</td>
-                        <td>{{ h['Kecamatan'] }}</td>
-                        <td>
-                            {% if 'Tingkat 1' in h['Tingkat_Urgensi'] %}
-                                <span class="badge badge-t1 px-2 py-1">Tingkat 1 - Sangat Tinggi</span>
-                            {% elif 'Tingkat 2' in h['Tingkat_Urgensi'] %}
-                                <span class="badge badge-t2 px-2 py-1">Tingkat 2 - Sedang</span>
-                            {% else %}
-                                <span class="badge badge-t3 px-2 py-1">Tingkat 3 - Rutin</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center fw-bold {% if h['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
-                            {{ h['Skor_Urgensi'] }}
-                        </td>
-                        <td class="fw-bold text-primary">{{ h['Kasus per sasaran balita'] }}%</td>
-                        <td><small class="badge bg-light text-dark border">{{ h['Kelompok_Prioritas'].split(' - ')[0] }}</small></td>
-                        <td><small class="text-secondary">{{ h['Usulan_Kebijakan'] }}</small></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+
+    <div class="table-responsive">
+        <table class="table-saas">
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 60px;">Rank</th>
+                    <th>Puskesmas</th>
+                    <th>Kecamatan</th>
+                    <th>Tingkat Urgensi</th>
+                    <th class="text-center">Skor Urgensi</th>
+                    <th>Beban Kasus</th>
+                    <th>Profil Klaster</th>
+                    <th>Usulan Kebijakan Manajerial</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h in hasil %}
+                <tr>
+                    <td class="text-center fw-bold text-muted">{{ h['Peringkat_Urgensi'] }}</td>
+                    <td class="fw-bold text-dark">{{ h['Puskesmas'] }}</td>
+                    <td class="text-secondary">{{ h['Kecamatan'] }}</td>
+                    <td>
+                        {% if 'Tingkat 1' in h['Tingkat_Urgensi'] %}
+                            <span class="badge-urgensi-1">Tingkat 1 &mdash; Sangat Tinggi</span>
+                        {% elif 'Tingkat 2' in h['Tingkat_Urgensi'] %}
+                            <span class="badge-urgensi-2">Tingkat 2 &mdash; Sedang</span>
+                        {% else %}
+                            <span class="badge-urgensi-3">Tingkat 3 &mdash; Rutin</span>
+                        {% endif %}
+                    </td>
+                    <td class="text-center fw-bold {% if h['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
+                        {{ h['Skor_Urgensi'] }}
+                    </td>
+                    <td class="fw-semibold text-dark">{{ h['Kasus per sasaran balita'] }}%</td>
+                    <td>
+                        <span class="badge bg-light text-dark border px-2 py-1">{{ h['Kelompok_Prioritas'].split(' - ')[0] }}</span>
+                    </td>
+                    <td style="max-width: 320px;">
+                        <small class="text-secondary d-block" style="line-height: 1.4;">{{ h['Usulan_Kebijakan'] }}</small>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
 </div>
 

@@ -1,204 +1,346 @@
 {% extends 'base.html' %}
+{% block title %}Dashboard Prioritas — RANCAK GIZI Kota Padang{% endblock %}
+
 {% block content %}
 
 <!-- Header & Ringkasan -->
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
-            <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center">
-                <div>
-                    <h2 class="fw-bold text-primary mb-1">
-                        <i class="bi bi-geo-alt-fill me-2"></i>Prioritas Wilayah Penanganan Stunting Kota Padang
-                    </h2>
-                    <p class="text-secondary mb-0">
-                        Hasil pemeringkatan 24 Puskesmas berdasarkan <strong>Indeks Urgensi Komposit (Hasil Utama)</strong> didampingi profiling kelompok K-Means.
-                    </p>
-                </div>
-                <div class="mt-3 mt-md-0">
-                    <a href="/upload" class="btn btn-primary px-3 py-2 fw-bold shadow-sm">
-                        <i class="bi bi-cloud-arrow-up-fill me-2"></i>Unggah Bulan Baru
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Kartu Statistik Cepat -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3 col-6">
-        <div class="card card-stat border-0 shadow-sm p-3 bg-white border-start border-danger border-4">
-            <div class="text-secondary small fw-bold">TINGKAT 1 (SANGAT TINGGI)</div>
-            <div class="fs-2 fw-bold text-danger">{{ stats.t1 }} <span class="fs-6 fw-normal text-muted">Puskesmas</span></div>
-            <small class="text-muted">Krisis Klinis & Beban Tinggi</small>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card card-stat border-0 shadow-sm p-3 bg-white border-start border-warning border-4">
-            <div class="text-secondary small fw-bold">TINGKAT 2 (SEDANG)</div>
-            <div class="fs-2 fw-bold text-warning">{{ stats.t2 }} <span class="fs-6 fw-normal text-muted">Puskesmas</span></div>
-            <small class="text-muted">Intervensi Menengah</small>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card card-stat border-0 shadow-sm p-3 bg-white border-start border-success border-4">
-            <div class="text-secondary small fw-bold">TINGKAT 3 (RUTIN)</div>
-            <div class="fs-2 fw-bold text-success">{{ stats.t3 }} <span class="fs-6 fw-normal text-muted">Puskesmas</span></div>
-            <small class="text-muted">Pemantauan Posyandu</small>
-        </div>
-    </div>
-    <div class="col-md-3 col-6">
-        <div class="card card-stat border-0 shadow-sm p-3 bg-white border-start border-primary border-4">
-            <div class="text-secondary small fw-bold">STATUS KEPASTIAN</div>
-            <div class="fs-2 fw-bold text-primary">{{ stats.pasti }} / {{ stats.total }}</div>
-            <small class="text-muted">{{ stats.belum_pasti }} di perbatasan (Belum pasti)</small>
-        </div>
-    </div>
-</div>
-
-<!-- Alert Konteks Epidemiologi Dinkes -->
-<div class="alert alert-info border-0 shadow-sm rounded-3 py-3" role="alert">
-    <div class="d-flex">
-        <i class="bi bi-info-circle-fill fs-4 me-3 text-info"></i>
+<div class="card card-saas p-4 mb-4">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <div class="fw-bold mb-1">Catatan Metodologi & Pelaporan Kasus:</div>
-            <div class="small">
-                Indikator <em>Kasus per Sasaran Balita (%)</em> dihitung dari kasus yang terdaftar di berkas e-PPGBM / BNBA, bukan survei acak populasi. Pada puskesmas dengan jumlah kasus sedikit (seperti <strong>ALAI</strong>, rerata 18 kasus/bulan), persentase sangat pendek tampak tinggi (44,4%) karena waspada pelaporan posyandu (D/S) belum lengkap (hanya anak parah yang terdata).
+            <div class="d-inline-flex align-items-center gap-2 mb-2">
+                <span class="badge" style="background-color: var(--rg-primary-light); color: var(--rg-primary); border: 1px solid var(--rg-primary-subtle); font-weight: 600;">
+                    <i class="bi bi-geo-alt-fill me-1"></i> Data Acuan Maret &ndash; Mei 2026
+                </span>
+                <span class="text-muted small">&bull; Total 24 Puskesmas se-Kota Padang</span>
+            </div>
+            <h3 class="fw-bold text-dark mb-1">Prioritas Penanganan Stunting Wilayah</h3>
+            <p class="text-secondary small mb-0">
+                Peringkat urgensi dihitung dari rata-rata <em>z-score</em> 5 indikator utama (Indeks Urgensi Komposit), diperkuat hasil profiling klaster K-Means ($K=3$).
+            </p>
+        </div>
+        <div class="d-flex gap-2 flex-shrink-0">
+            <a href="/upload" class="btn btn-rg-primary d-inline-flex align-items-center">
+                <i class="bi bi-cloud-arrow-up-fill me-2"></i> Unggah Bulan Baru
+            </a>
+            <a href="/ekspor" class="btn btn-rg-outline d-inline-flex align-items-center">
+                <i class="bi bi-download me-2"></i> Ekspor Excel
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- 4 Kartu Metrik Ringkas -->
+<div class="row g-3 mb-4">
+    <div class="col-lg-3 col-6">
+        <div class="card-stat-modern">
+            <div class="stat-bar" style="background-color: #dc2626;"></div>
+            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 1 (Sangat Tinggi)</div>
+            <div class="d-flex align-items-baseline gap-2">
+                <span class="fs-2 fw-bold text-dark">{{ stats.t1 }}</span>
+                <span class="text-muted small">Puskesmas</span>
+            </div>
+            <div class="text-muted" style="font-size: 0.75rem;">Krisis klinis & beban penanganan tinggi</div>
+        </div>
+    </div>
+    
+    <div class="col-lg-3 col-6">
+        <div class="card-stat-modern">
+            <div class="stat-bar" style="background-color: #d97706;"></div>
+            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 2 (Sedang)</div>
+            <div class="d-flex align-items-baseline gap-2">
+                <span class="fs-2 fw-bold text-dark">{{ stats.t2 }}</span>
+                <span class="text-muted small">Puskesmas</span>
+            </div>
+            <div class="text-muted" style="font-size: 0.75rem;">Intervensi terarah & pendampingan gizi</div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="card-stat-modern">
+            <div class="stat-bar" style="background-color: #16a34a;"></div>
+            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 3 (Rutin)</div>
+            <div class="d-flex align-items-baseline gap-2">
+                <span class="fs-2 fw-bold text-dark">{{ stats.t3 }}</span>
+                <span class="text-muted small">Puskesmas</span>
+            </div>
+            <div class="text-muted" style="font-size: 0.75rem;">Pemantauan berkala & edukasi posyandu</div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-6">
+        <div class="card-stat-modern">
+            <div class="stat-bar" style="background-color: var(--rg-primary);"></div>
+            <div class="text-secondary small fw-bold text-uppercase mb-1">Stabilitas Model</div>
+            <div class="d-flex align-items-baseline gap-2">
+                <span class="fs-2 fw-bold text-dark">{{ stats.pasti }}<span class="text-muted fs-5 fw-normal">/{{ stats.total }}</span></span>
+                <span class="badge-status-pasti ms-1">Pasti</span>
+            </div>
+            <div class="text-muted" style="font-size: 0.75rem;">{{ stats.belum_pasti }} puskesmas di perbatasan klaster</div>
+        </div>
+    </div>
+</div>
+
+<!-- Tab Navigasi & Filter Toolbar -->
+<div class="card card-saas mb-4">
+    <div class="card-body p-3 p-md-4">
+        
+        <!-- Tab Switcher -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-3 pb-3 border-bottom">
+            <ul class="nav nav-pills nav-pills-rg gap-2" id="dataTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="puskesmas-tab" data-bs-toggle="pill" data-bs-target="#tab-puskesmas" type="button" role="tab">
+                        <i class="bi bi-hospital me-1"></i> Data 24 Puskesmas
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="kecamatan-tab" data-bs-toggle="pill" data-bs-target="#tab-kecamatan" type="button" role="tab">
+                        <i class="bi bi-buildings me-1"></i> Rekapitulasi 11 Kecamatan
+                    </button>
+                </li>
+            </ul>
+
+            <div class="text-secondary small" id="resultCounter">
+                Menampilkan <strong>24</strong> Puskesmas
             </div>
         </div>
+
+        <!-- Search & Filter Controls (Puskesmas Tab only) -->
+        <div id="filterToolbar" class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-3">
+            <!-- Search Input -->
+            <div class="position-relative flex-grow-1" style="max-width: 360px;">
+                <i class="bi bi-search search-icon-wrapper"></i>
+                <input type="text" id="searchInput" class="form-control search-control w-100" placeholder="Cari puskesmas atau kecamatan...">
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="d-flex flex-wrap gap-1 align-items-center">
+                <span class="text-secondary small fw-bold me-1 d-none d-sm-inline">Filter:</span>
+                <button type="button" class="filter-pill active" data-filter="all">Semua</button>
+                <button type="button" class="filter-pill" data-filter="Tingkat 1">Tingkat 1</button>
+                <button type="button" class="filter-pill" data-filter="Tingkat 2">Tingkat 2</button>
+                <button type="button" class="filter-pill" data-filter="Tingkat 3">Tingkat 3</button>
+            </div>
+        </div>
+
+        <!-- Tab Contents -->
+        <div class="tab-content" id="dataTabContent">
+            
+            <!-- Tab 1: Tabel Puskesmas -->
+            <div class="tab-pane fade show active" id="tab-puskesmas" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table-saas" id="puskesmasTable">
+                        <thead>
+                            <tr>
+                                <th class="text-center" style="width: 60px;">Rank</th>
+                                <th>Puskesmas</th>
+                                <th>Kecamatan</th>
+                                <th>Tingkat Urgensi</th>
+                                <th class="text-center">Skor Urgensi</th>
+                                <th>Profil Klaster</th>
+                                <th>Status Stabilitas</th>
+                                <th class="text-center" style="width: 110px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in puskesmas %}
+                            <tr class="puskesmas-row" 
+                                data-nama="{{ p['Puskesmas']|lower }}" 
+                                data-kecamatan="{{ p['Kecamatan']|lower }}" 
+                                data-tingkat="{{ p['Tingkat_Urgensi'] }}">
+                                <td class="text-center fw-bold text-muted">{{ p['Peringkat_Urgensi'] }}</td>
+                                <td>
+                                    <a href="/puskesmas/{{ p['Puskesmas'] }}" class="fw-bold text-decoration-none text-dark hover-primary d-block">
+                                        {{ p['Puskesmas'] }}
+                                    </a>
+                                </td>
+                                <td class="text-secondary">{{ p['Kecamatan'] }}</td>
+                                <td>
+                                    {% if 'Tingkat 1' in p['Tingkat_Urgensi'] %}
+                                        <span class="badge-urgensi-1"><i class="bi bi-circle-fill" style="font-size: 6px;"></i> Tingkat 1 &mdash; Sangat Tinggi</span>
+                                    {% elif 'Tingkat 2' in p['Tingkat_Urgensi'] %}
+                                        <span class="badge-urgensi-2"><i class="bi bi-circle-fill" style="font-size: 6px;"></i> Tingkat 2 &mdash; Sedang</span>
+                                    {% else %}
+                                        <span class="badge-urgensi-3"><i class="bi bi-circle-fill" style="font-size: 6px;"></i> Tingkat 3 &mdash; Rutin</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center fw-bold {% if p['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
+                                    {{ p['Skor_Urgensi'] }}
+                                </td>
+                                <td>
+                                    <span class="fw-semibold text-dark">{{ p['Kelompok_Prioritas'].split(' - ')[0] }}</span>
+                                    <span class="text-muted d-block" style="font-size: 0.75rem;">
+                                        {% if 'Prioritas 1' in p['Kelompok_Prioritas'] %}
+                                            Krisis Balita & Bumil KEK
+                                        {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
+                                            Beban Kasus Tinggi ({{ p['Kasus per sasaran balita'] }}%)
+                                        {% else %}
+                                            Indikator Terkendali
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>
+                                    {% if p['Status_Kepastian'] == 'Pasti' %}
+                                        <span class="badge-status-pasti"><i class="bi bi-check-lg me-1"></i>Pasti</span>
+                                    {% else %}
+                                        <span class="badge-status-belum"><i class="bi bi-question me-1"></i>Belum pasti</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-center">
+                                    <a href="/puskesmas/{{ p['Puskesmas'] }}" class="btn btn-rg-outline btn-sm py-1 px-2">
+                                        Detail <i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyState" class="text-center py-5 d-none">
+                    <div class="mb-3 text-muted">
+                        <i class="bi bi-search fs-1"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark">Puskesmas Tidak Ditemukan</h6>
+                    <p class="text-secondary small mb-0">Coba gunakan kata kunci pencarian lain atau pilih filter "Semua".</p>
+                </div>
+            </div>
+
+            <!-- Tab 2: Tabel Kecamatan -->
+            <div class="tab-pane fade" id="tab-kecamatan" role="tabpanel">
+                <div class="table-responsive">
+                    <table class="table-saas">
+                        <thead>
+                            <tr>
+                                <th>Kecamatan</th>
+                                <th class="text-center">Puskesmas</th>
+                                <th class="text-center">Tingkat 1</th>
+                                <th class="text-center">Tingkat 2</th>
+                                <th class="text-center">Tingkat 3</th>
+                                <th class="text-end">Rerata Kasus/Bln</th>
+                                <th class="text-end">Total Sasaran</th>
+                                <th class="text-end">Kasus/Sasaran Kec. (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for k in kecamatan %}
+                            <tr>
+                                <td class="fw-bold text-dark">{{ k['Kecamatan'] }}</td>
+                                <td class="text-center">{{ k['Jml_Puskesmas'] }}</td>
+                                <td class="text-center">
+                                    {% if k['Tingkat_1'] > 0 %}
+                                        <span class="badge bg-danger px-2 py-1">{{ k['Tingkat_1'] }}</span>
+                                    {% else %}<span class="text-muted">&ndash;</span>{% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if k['Tingkat_2'] > 0 %}
+                                        <span class="badge bg-warning text-dark px-2 py-1">{{ k['Tingkat_2'] }}</span>
+                                    {% else %}<span class="text-muted">&ndash;</span>{% endif %}
+                                </td>
+                                <td class="text-center">
+                                    {% if k['Tingkat_3'] > 0 %}
+                                        <span class="badge bg-success px-2 py-1">{{ k['Tingkat_3'] }}</span>
+                                    {% else %}<span class="text-muted">&ndash;</span>{% endif %}
+                                </td>
+                                <td class="text-end text-secondary">{{ k['Rerata_Kasus_per_Bulan'] }}</td>
+                                <td class="text-end text-secondary">{{ k['Sasaran_Balita'] }}</td>
+                                <td class="text-end fw-bold text-dark">{{ k['Kasus_per_Sasaran_Kecamatan_(%)'] }}%</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 </div>
 
-<!-- Tabel Utama 24 Puskesmas -->
-<div class="card border-0 shadow-sm mb-4 rounded-3">
-    <div class="card-header bg-white py-3 border-0">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0 text-dark">
-                <i class="bi bi-table me-2 text-primary"></i>Peringkat 24 Puskesmas Kota Padang (Data Acuan Maret - Mei 2026)
-            </h5>
-            <span class="badge bg-light text-dark border">24 Unit Analisis</span>
+<!-- Catatan Epidemiologi & Metodologi Dinkes -->
+<div class="card card-saas p-4 mb-2" style="background-color: var(--rg-primary-light); border-color: var(--rg-primary-subtle);">
+    <div class="d-flex gap-3 align-items-start">
+        <div class="p-2 rounded-circle bg-white text-success shadow-sm flex-shrink-0" style="color: var(--rg-primary) !important;">
+            <i class="bi bi-info-circle-fill fs-5"></i>
         </div>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th class="text-center" style="width: 70px;">Rank</th>
-                        <th>Puskesmas</th>
-                        <th>Kecamatan</th>
-                        <th>Tingkat Urgensi Kebijakan</th>
-                        <th class="text-center">Skor Urgensi</th>
-                        <th>Status Kepastian</th>
-                        <th>Profil K-Means ($K=3$)</th>
-                        <th class="text-center" style="width: 100px;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for p in puskesmas %}
-                    <tr>
-                        <td class="text-center fw-bold text-secondary">{{ p['Peringkat_Urgensi'] }}</td>
-                        <td>
-                            <a href="/puskesmas/{{ p['Puskesmas'] }}" class="fw-bold text-decoration-none text-dark hover-primary">
-                                {{ p['Puskesmas'] }}
-                            </a>
-                        </td>
-                        <td>{{ p['Kecamatan'] }}</td>
-                        <td>
-                            {% if 'Tingkat 1' in p['Tingkat_Urgensi'] %}
-                                <span class="badge badge-t1 px-2 py-1"><i class="bi bi-circle-fill me-1 small"></i>Tingkat 1 - Sangat Tinggi</span>
-                            {% elif 'Tingkat 2' in p['Tingkat_Urgensi'] %}
-                                <span class="badge badge-t2 px-2 py-1"><i class="bi bi-circle-fill me-1 small"></i>Tingkat 2 - Sedang</span>
-                            {% else %}
-                                <span class="badge badge-t3 px-2 py-1"><i class="bi bi-circle-fill me-1 small"></i>Tingkat 3 - Rutin</span>
-                            {% endif %}
-                        </td>
-                        <td class="text-center fw-bold {% if p['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
-                            {{ p['Skor_Urgensi'] }}
-                        </td>
-                        <td>
-                            {% if p['Status_Kepastian'] == 'Pasti' %}
-                                <span class="badge bg-primary-subtle text-primary border border-primary px-2">Pasti</span>
-                            {% else %}
-                                <span class="badge bg-secondary-subtle text-secondary border border-secondary px-2">Belum pasti</span>
-                            {% endif %}
-                        </td>
-                        <td>
-                            <small class="text-muted d-block">{{ p['Kelompok_Prioritas'].split(' - ')[0] }}</small>
-                            <small class="text-secondary" style="font-size: 0.75rem;">
-                                {% if 'Prioritas 1' in p['Kelompok_Prioritas'] %}
-                                    Krisis Balita & Risiko Ibu
-                                {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
-                                    Beban Kasus Tinggi ({{ p['Kasus per sasaran balita'] }}%)
-                                {% else %}
-                                    Indikator Terkendali
-                                {% endif %}
-                            </small>
-                        </td>
-                        <td class="text-center">
-                            <a href="/puskesmas/{{ p['Puskesmas'] }}" class="btn btn-outline-primary btn-sm py-1 px-2">
-                                Detail <i class="bi bi-chevron-right"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <div>
+            <h6 class="fw-bold text-dark mb-1">Catatan Interpretasi Data e-PPGBM Dinas Kesehatan:</h6>
+            <p class="text-secondary small mb-0">
+                Indikator <em>Kasus per Sasaran Balita (%)</em> dihitung dari kasus balita yang terdaftar di berkas pelaporan e-PPGBM/BNBA rutin, bukan dari survei acak populasi. Pada puskesmas dengan volume kasus sedikit (contoh: <strong>ALAI</strong>), proporsi kasus sangat pendek tampak tinggi karena pelaporan posyandu terkonsentrasi pada anak yang sudah mengalami gejala klinis berat.
+            </p>
         </div>
     </div>
 </div>
 
-<!-- Ringkasan per Kecamatan -->
-<div class="card border-0 shadow-sm rounded-3">
-    <div class="card-header bg-white py-3 border-0">
-        <h5 class="fw-bold mb-0 text-dark">
-            <i class="bi bi-buildings-fill me-2 text-primary"></i>Ringkasan per Wilayah Kecamatan (11 Kecamatan)
-        </h5>
-    </div>
-    <div class="card-body p-0">
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0">
-                <thead class="table-light">
-                    <tr>
-                        <th>Kecamatan</th>
-                        <th class="text-center">Jml Puskesmas</th>
-                        <th class="text-center">Tingkat 1</th>
-                        <th class="text-center">Tingkat 2</th>
-                        <th class="text-center">Tingkat 3</th>
-                        <th class="text-end">Rerata Kasus/Bulan</th>
-                        <th class="text-end">Total Sasaran</th>
-                        <th class="text-end">Kasus/Sasaran Kec. (%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for k in kecamatan %}
-                    <tr>
-                        <td class="fw-bold">{{ k['Kecamatan'] }}</td>
-                        <td class="text-center">{{ k['Jml_Puskesmas'] }}</td>
-                        <td class="text-center">
-                            {% if k['Tingkat_1'] > 0 %}
-                                <span class="badge bg-danger">{{ k['Tingkat_1'] }}</span>
-                            {% else %}-{% endif %}
-                        </td>
-                        <td class="text-center">
-                            {% if k['Tingkat_2'] > 0 %}
-                                <span class="badge bg-warning text-dark">{{ k['Tingkat_2'] }}</span>
-                            {% else %}-{% endif %}
-                        </td>
-                        <td class="text-center">
-                            {% if k['Tingkat_3'] > 0 %}
-                                <span class="badge bg-success">{{ k['Tingkat_3'] }}</span>
-                            {% else %}-{% endif %}
-                        </td>
-                        <td class="text-end">{{ k['Rerata_Kasus_per_Bulan'] }}</td>
-                        <td class="text-end">{{ k['Sasaran_Balita'] }}</td>
-                        <td class="text-end fw-bold text-primary">{{ k['Kasus_per_Sasaran_Kecamatan_(%)'] }}%</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-    </div>
-</div>
+{% endblock %}
 
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('searchInput');
+    const filterPills = document.querySelectorAll('.filter-pill');
+    const rows = document.querySelectorAll('.puskesmas-row');
+    const emptyState = document.getElementById('emptyState');
+    const resultCounter = document.getElementById('resultCounter');
+    const kecamatanTab = document.getElementById('kecamatan-tab');
+    const puskesmasTab = document.getElementById('puskesmas-tab');
+    const filterToolbar = document.getElementById('filterToolbar');
+
+    let currentFilter = 'all';
+    let currentSearch = '';
+
+    function applyFilters() {
+        let visibleCount = 0;
+
+        rows.forEach(row => {
+            const nama = row.getAttribute('data-nama');
+            const kec = row.getAttribute('data-kecamatan');
+            const tingkat = row.getAttribute('data-tingkat');
+
+            const matchesSearch = !currentSearch || nama.includes(currentSearch) || kec.includes(currentSearch);
+            const matchesFilter = currentFilter === 'all' || tingkat.includes(currentFilter);
+
+            if (matchesSearch && matchesFilter) {
+                row.style.display = '';
+                visibleCount++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        if (visibleCount === 0) {
+            emptyState.classList.remove('d-none');
+        } else {
+            emptyState.classList.add('d-none');
+        }
+
+        resultCounter.innerHTML = `Menampilkan <strong>${visibleCount}</strong> dari ${rows.length} Puskesmas`;
+    }
+
+    searchInput.addEventListener('input', function(e) {
+        currentSearch = e.target.value.toLowerCase().trim();
+        applyFilters();
+    });
+
+    filterPills.forEach(pill => {
+        pill.addEventListener('click', function() {
+            filterPills.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            currentFilter = this.getAttribute('data-filter');
+            applyFilters();
+        });
+    });
+
+    // Toggle filter toolbar visibility when switching tabs
+    kecamatanTab.addEventListener('shown.bs.tab', function() {
+        filterToolbar.classList.add('d-none');
+        resultCounter.innerHTML = 'Total <strong>11</strong> Wilayah Kecamatan';
+    });
+
+    puskesmasTab.addEventListener('shown.bs.tab', function() {
+        filterToolbar.classList.remove('d-none');
+        applyFilters();
+    });
+});
+</script>
 {% endblock %}

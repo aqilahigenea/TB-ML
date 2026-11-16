@@ -17,5 +17,6 @@ uploads/*
 .DS_Store
 Thumbs.db
 
-# Notebook backups
-*.backup.ipynb
+# Temporary / backup files
+*_backup.*
+*(1).*

@@ -14,7 +14,12 @@ from flask import (
     send_file,
     url_for,
 )
-from model_helper import cek_pergeseran_indikator, load_model, proses_file_baru
+from model_helper import (
+    cek_pergeseran_indikator,
+    load_model,
+    proses_file_baru,
+    prediksi_satu_puskesmas,
+)
 import pandas as pd
 
 app = Flask(__name__)
@@ -137,6 +142,46 @@ def detail_puskesmas(nama):
   )
 
   return render_template('detail.html', p=p_data, rerata=rerata_kota)
+
+
+@app.route('/cek-manual', methods=['GET', 'POST'])
+def cek_manual():
+  """Halaman Cek Manual / Simulasi Satu Puskesmas."""
+  hasil = None
+  input_data = {}
+  fts = MODEL_PAKET['features']
+  ref_rerata = MODEL_PAKET.get('referensi_fitur', {}).get('rerata', {})
+  if not ref_rerata:
+    scaler = MODEL_PAKET['pipeline'].named_steps['scaler']
+    ref_rerata = dict(zip(fts, [round(float(m), 2) for m in scaler.mean_]))
+
+  if request.method == 'POST':
+    try:
+      nama_puskesmas = request.form.get(
+          'nama_puskesmas', 'Puskesmas Simulasi'
+      ).strip()
+      if not nama_puskesmas:
+        nama_puskesmas = 'Puskesmas Simulasi'
+
+      fitur_input = {}
+      for f in fts:
+        val = request.form.get(f, '').replace(',', '.')
+        fitur_input[f] = float(val)
+
+      hasil = prediksi_satu_puskesmas(fitur_input, MODEL_PAKET)
+      hasil['nama_puskesmas'] = nama_puskesmas
+      input_data = fitur_input
+      flash('Simulasi berhasil dihitung!', 'success')
+    except Exception as e:
+      flash(f'Harap isi semua kolom dengan angka yang valid: {e}', 'danger')
+
+  return render_template(
+      'cek_manual.html',
+      hasil=hasil,
+      input_data=input_data,
+      features=fts,
+      rerata_kota=ref_rerata,
+  )
 
 
 @app.route('/informasi-model')
