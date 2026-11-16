@@ -7,16 +7,8 @@
     <div class="col-lg-10">
         
         <!-- Header -->
-        <div class="card card-saas p-4 mb-4">
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="badge" style="background-color: var(--rg-primary-light); color: var(--rg-primary); border: 1px solid var(--rg-primary-subtle); font-weight: 600;">
-                    <i class="bi bi-shield-check me-1"></i> Transparansi Metodologi &amp; Evaluasi
-                </span>
-            </div>
-            <h3 class="fw-bold text-dark mb-1">Informasi, Metrik, &amp; Keterbatasan Model</h3>
-            <p class="text-secondary small mb-0">
-                Penjelasan metodologis Machine Learning, hasil evaluasi empiris, dan justifikasi pengambilan keputusan penanganan stunting Kota Padang.
-            </p>
+        <div class="mb-4">
+            <h4 class="fw-bold text-dark mb-0">Informasi, Metrik, &amp; Evaluasi Model ML</h4>
         </div>
 
         <!-- Kartu 3 Kalimat Inti -->
@@ -24,7 +16,7 @@
             <h6 class="fw-bold text-dark mb-2"><i class="bi bi-chat-quote-fill me-2" style="color: var(--rg-primary);"></i>Cerita Utama Proyek Ini:</h6>
             <ol class="mb-0 ps-3 text-dark small" style="line-height: 1.6;">
                 <li class="mb-1"><strong>Data BNBA e-PPGBM</strong> dibersihkan dari nilai anomali, lalu diringkas menjadi <strong>5 indikator per puskesmas</strong>.</li>
-                <li class="mb-1"><strong>K-Means ($K=3$)</strong> mengelompokkan 24 puskesmas, lalu kelompok diberi nama prioritas intervensi.</li>
+                <li class="mb-1"><strong>K-Means</strong> mengelompokkan 24 puskesmas, lalu kelompok diberi nama prioritas intervensi.</li>
                 <li>Hasil diuji dengan <strong>4 cara pengujian</strong> dan disimpulkan secara jujur: <em>pola ada namun lemah</em>.</li>
             </ol>
         </div>
@@ -32,7 +24,7 @@
         <!-- Kartu Metrik Evaluasi Model K-Means -->
         <div class="card card-saas p-4 mb-4">
             <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
-                <i class="bi bi-bar-chart-line-fill me-2" style="color: var(--rg-primary);"></i>Metrik Kualitas Klaster K-Means ($K=3$)
+                <i class="bi bi-bar-chart-line-fill me-2" style="color: var(--rg-primary);"></i>Metrik Kualitas Klaster K-Means
             </h6>
 
             <div class="row g-3 mb-3">
@@ -54,7 +46,7 @@
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
                         <div class="text-secondary small fw-bold">UJI LAWAN DATA ACAK</div>
                         <div class="fs-2 fw-bold text-danger my-1">p = 0,146</div>
-                        <small class="text-muted d-block">Tidak signifikan ($p &gt; 0,05$), pola tidak membuktikan kelompok terisolasi alami</small>
+                        <small class="text-muted d-block">Tidak signifikan (nilai p &gt; 0,05), pola tidak membuktikan kelompok terisolasi alami</small>
                     </div>
                 </div>
             </div>
@@ -98,8 +90,8 @@
                         <tr>
                             <td class="text-center fw-bold text-muted">2</td>
                             <td class="fw-bold text-dark">Elbow / Inertia</td>
-                            <td class="text-secondary">Berapa jumlah kelompok ($K$) yang efisien dan seimbang?</td>
-                            <td class="fw-bold text-dark">K = 3</td>
+                            <td class="text-secondary">Berapa jumlah kelompok (K) yang efisien dan seimbang?</td>
+                            <td class="fw-bold text-dark">3 Kelompok</td>
                             <td><span class="badge bg-success-subtle text-success border border-success-subtle">Optimal (Siku)</span></td>
                         </tr>
                         <tr>

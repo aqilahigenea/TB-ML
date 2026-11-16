@@ -3,85 +3,72 @@
 
 {% block content %}
 
-<!-- Header & Ringkasan -->
-<div class="card card-saas p-4 mb-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div>
-            <div class="d-inline-flex align-items-center gap-2 mb-2">
-                <span class="badge" style="background-color: var(--rg-primary-light); color: var(--rg-primary); border: 1px solid var(--rg-primary-subtle); font-weight: 600;">
-                    <i class="bi bi-geo-alt-fill me-1"></i> Data Acuan Maret &ndash; Mei 2026
-                </span>
-                <span class="text-muted small">&bull; Total 24 Puskesmas se-Kota Padang</span>
-            </div>
-            <h3 class="fw-bold text-dark mb-1">Prioritas Penanganan Stunting Wilayah</h3>
-            <p class="text-secondary small mb-0">
-                Peringkat urgensi dihitung dari rata-rata <em>z-score</em> 5 indikator utama (Indeks Urgensi Komposit), diperkuat hasil profiling klaster K-Means ($K=3$).
-            </p>
-        </div>
-        <div class="d-flex gap-2 flex-shrink-0">
-            <a href="/upload" class="btn btn-rg-primary d-inline-flex align-items-center">
-                <i class="bi bi-cloud-arrow-up-fill me-2"></i> Unggah Bulan Baru
-            </a>
-            <a href="/ekspor" class="btn btn-rg-outline d-inline-flex align-items-center">
-                <i class="bi bi-download me-2"></i> Ekspor Excel
-            </a>
-        </div>
-    </div>
+<!-- Header Prioritas -->
+<div class="mb-3">
+    <h4 class="fw-bold text-dark mb-0">Peringkat Prioritas Penanganan Stunting</h4>
 </div>
 
-<!-- 4 Kartu Metrik Ringkas -->
-<div class="row g-3 mb-4">
+<!-- 4 Kartu Metrik Ringkas (Gaya Baront Dashboard) -->
+<div class="row g-3 mb-3">
+    <!-- Card 1: Tingkat 1 Hero Dark Green Card -->
     <div class="col-lg-3 col-6">
-        <div class="card-stat-modern">
-            <div class="stat-bar" style="background-color: #dc2626;"></div>
-            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 1 (Sangat Tinggi)</div>
-            <div class="d-flex align-items-baseline gap-2">
-                <span class="fs-2 fw-bold text-dark">{{ stats.t1 }}</span>
-                <span class="text-muted small">Puskesmas</span>
+        <div class="stat-card-baront stat-card-hero">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="stat-title">Tingkat 1 (Sangat Tinggi)</span>
+                <span class="stat-arrow"><i class="bi bi-arrow-up-right"></i></span>
             </div>
-            <div class="text-muted" style="font-size: 0.75rem;">Krisis klinis & beban penanganan tinggi</div>
+            <div class="stat-value">{{ stats.t1 }} <span class="fs-6 fw-normal" style="color: #bbf7d0;">Puskesmas</span></div>
+            <div class="stat-pill">
+                <i class="bi bi-exclamation-triangle-fill"></i> Prioritas Utama Wilayah
+            </div>
         </div>
     </div>
     
+    <!-- Card 2: Tingkat 2 White Card with Amber Pill -->
     <div class="col-lg-3 col-6">
-        <div class="card-stat-modern">
-            <div class="stat-bar" style="background-color: #d97706;"></div>
-            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 2 (Sedang)</div>
-            <div class="d-flex align-items-baseline gap-2">
-                <span class="fs-2 fw-bold text-dark">{{ stats.t2 }}</span>
-                <span class="text-muted small">Puskesmas</span>
+        <div class="stat-card-baront stat-card-white">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="stat-title">Tingkat 2 (Sedang)</span>
+                <span class="stat-arrow"><i class="bi bi-arrow-up-right"></i></span>
             </div>
-            <div class="text-muted" style="font-size: 0.75rem;">Intervensi terarah & pendampingan gizi</div>
+            <div class="stat-value">{{ stats.t2 }} <span class="fs-6 fw-normal text-muted">Puskesmas</span></div>
+            <div class="stat-pill-amber">
+                <i class="bi bi-graph-up-arrow"></i> Intervensi Terarah
+            </div>
         </div>
     </div>
 
+    <!-- Card 3: Tingkat 3 White Card with Green Pill -->
     <div class="col-lg-3 col-6">
-        <div class="card-stat-modern">
-            <div class="stat-bar" style="background-color: #16a34a;"></div>
-            <div class="text-secondary small fw-bold text-uppercase mb-1">Tingkat 3 (Rutin)</div>
-            <div class="d-flex align-items-baseline gap-2">
-                <span class="fs-2 fw-bold text-dark">{{ stats.t3 }}</span>
-                <span class="text-muted small">Puskesmas</span>
+        <div class="stat-card-baront stat-card-white">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="stat-title">Tingkat 3 (Rutin)</span>
+                <span class="stat-arrow"><i class="bi bi-arrow-up-right"></i></span>
             </div>
-            <div class="text-muted" style="font-size: 0.75rem;">Pemantauan berkala & edukasi posyandu</div>
+            <div class="stat-value">{{ stats.t3 }} <span class="fs-6 fw-normal text-muted">Puskesmas</span></div>
+            <div class="stat-pill-green">
+                <i class="bi bi-check-circle-fill"></i> Pemantauan Posyandu
+            </div>
         </div>
     </div>
 
+    <!-- Card 4: Stabilitas Model White Card with Blue Pill -->
     <div class="col-lg-3 col-6">
-        <div class="card-stat-modern">
-            <div class="stat-bar" style="background-color: var(--rg-primary);"></div>
-            <div class="text-secondary small fw-bold text-uppercase mb-1">Stabilitas Model</div>
-            <div class="d-flex align-items-baseline gap-2">
-                <span class="fs-2 fw-bold text-dark">{{ stats.pasti }}<span class="text-muted fs-5 fw-normal">/{{ stats.total }}</span></span>
-                <span class="badge-status-pasti ms-1">Pasti</span>
+        <div class="stat-card-baront stat-card-white">
+            <div class="d-flex justify-content-between align-items-center mb-1">
+                <span class="stat-title">Stabilitas Model</span>
+                <span class="stat-arrow"><i class="bi bi-arrow-up-right"></i></span>
             </div>
-            <div class="text-muted" style="font-size: 0.75rem;">{{ stats.belum_pasti }} puskesmas di perbatasan klaster</div>
+            <div class="stat-value">{{ stats.pasti }}<span class="fs-6 fw-normal text-muted">/{{ stats.total }}</span> <span class="fs-6 fw-normal text-muted">Pasti</span></div>
+            <div class="stat-pill-blue">
+                <i class="bi bi-shield-check"></i> 95,8% Konsisten (300x)
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Tab Navigasi & Filter Toolbar -->
-<div class="card card-saas mb-4">
+<div class="card card-saas mb-3">
     <div class="card-body p-3 p-md-4">
         
         <!-- Tab Switcher -->
@@ -257,16 +244,16 @@
     </div>
 </div>
 
-<!-- Catatan Epidemiologi & Metodologi Dinkes -->
+<!-- Catatan Singkat -->
 <div class="card card-saas p-4 mb-2" style="background-color: var(--rg-primary-light); border-color: var(--rg-primary-subtle);">
     <div class="d-flex gap-3 align-items-start">
         <div class="p-2 rounded-circle bg-white text-success shadow-sm flex-shrink-0" style="color: var(--rg-primary) !important;">
             <i class="bi bi-info-circle-fill fs-5"></i>
         </div>
         <div>
-            <h6 class="fw-bold text-dark mb-1">Catatan Interpretasi Data e-PPGBM Dinas Kesehatan:</h6>
+            <h6 class="fw-bold text-dark mb-1">Catatan Penting Data:</h6>
             <p class="text-secondary small mb-0">
-                Indikator <em>Kasus per Sasaran Balita (%)</em> dihitung dari kasus balita yang terdaftar di berkas pelaporan e-PPGBM/BNBA rutin, bukan dari survei acak populasi. Pada puskesmas dengan volume kasus sedikit (contoh: <strong>ALAI</strong>), proporsi kasus sangat pendek tampak tinggi karena pelaporan posyandu terkonsentrasi pada anak yang sudah mengalami gejala klinis berat.
+                Angka di atas dihitung dari laporan bulanan posyandu. Pada puskesmas dengan jumlah kasus sedikit (contohnya <strong>ALAI</strong>), persentase anak sangat pendek tampak tinggi karena posyandu lebih cepat mencatat balita yang sudah mengalami gejala klinis berat.
             </p>
         </div>
     </div>

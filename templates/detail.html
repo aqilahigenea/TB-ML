@@ -13,27 +13,19 @@
 </nav>
 
 <!-- Header Profil Puskesmas -->
-<div class="card card-saas p-4 mb-4">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
-        <div>
-            <div class="d-flex align-items-center gap-2 mb-2">
-                <span class="badge" style="background-color: var(--rg-primary-light); color: var(--rg-primary); border: 1px solid var(--rg-primary-subtle); font-weight: 600;">
-                    <i class="bi bi-geo-alt-fill me-1"></i> Kecamatan {{ p['Kecamatan'] }}
-                </span>
-                <span class="text-muted small">&bull; Peringkat ke-<strong>{{ p['Peringkat_Urgensi'] }}</strong> dari 24 Puskesmas</span>
-            </div>
-            <h2 class="fw-bold text-dark mb-1">Puskesmas {{ p['Puskesmas'] }}</h2>
-            <p class="text-secondary small mb-0">Rincian capaian indikator klinis balita dan profil penanganan stunting.</p>
-        </div>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark mb-1">Puskesmas {{ p['Puskesmas'] }}</h3>
+        <span class="text-secondary small">Kecamatan {{ p['Kecamatan'] }} &bull; Peringkat ke-<strong>{{ p['Peringkat_Urgensi'] }}</strong> dari 24 Puskesmas</span>
+    </div>
 
-        <div class="d-flex gap-2">
-            <a href="/" class="btn btn-rg-outline d-inline-flex align-items-center">
-                <i class="bi bi-arrow-left me-1"></i> Kembali
-            </a>
-            <button onclick="window.print()" class="btn btn-rg-primary d-inline-flex align-items-center">
-                <i class="bi bi-printer-fill me-1"></i> Cetak Profil
-            </button>
-        </div>
+    <div class="d-flex gap-2">
+        <a href="/" class="btn btn-rg-outline d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-1"></i> Kembali
+        </a>
+        <button onclick="window.print()" class="btn btn-rg-primary d-inline-flex align-items-center">
+            <i class="bi bi-printer-fill me-1"></i> Cetak Profil
+        </button>
     </div>
 </div>
 
@@ -77,7 +69,7 @@
 
             <!-- Klaster K-Means & Stabilitas -->
             <div class="mb-3">
-                <label class="text-secondary small d-block mb-1">Kelompok Profil K-Means ($K=3$):</label>
+                <label class="text-secondary small d-block mb-1">Kelompok Profil K-Means:</label>
                 <div class="fw-bold text-dark fs-6">{{ p['Kelompok_Prioritas'].split(' - ')[0] }}</div>
                 <small class="text-muted">
                     {% if 'Prioritas 1' in p['Kelompok_Prioritas'] %}

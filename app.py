@@ -33,9 +33,8 @@ os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 MODEL_PAKET = load_model()
 
 
-@app.route('/')
-def index():
-  """Halaman Utama: Dashboard 24 Puskesmas Data Acuan."""
+def baca_data_acuan():
+  """Membaca data acuan puskesmas dan kecamatan dengan proteksi kolom."""
   excel_path = os.path.join(
       os.path.dirname(__file__),
       'data',
@@ -43,6 +42,61 @@ def index():
   )
   df_puskesmas = pd.read_excel(excel_path, sheet_name='Puskesmas')
   df_kecamatan = pd.read_excel(excel_path, sheet_name='Kecamatan')
+
+  if 'Peringkat_Urgensi' not in df_puskesmas.columns:
+    if 'Peringkat_Kota' in df_puskesmas.columns:
+      df_puskesmas['Peringkat_Urgensi'] = df_puskesmas['Peringkat_Kota']
+    else:
+      df_puskesmas = df_puskesmas.sort_values(
+          'Skor_Urgensi', ascending=False
+      ).reset_index(drop=True)
+      df_puskesmas['Peringkat_Urgensi'] = range(1, len(df_puskesmas) + 1)
+
+  if 'Tingkat_Urgensi' not in df_puskesmas.columns:
+    df_puskesmas['Tingkat_Urgensi'] = [
+        'Tingkat 1 - Sangat Tinggi'
+        if r <= 8
+        else ('Tingkat 2 - Sedang' if r <= 16 else 'Tingkat 3 - Rutin')
+        for r in df_puskesmas['Peringkat_Urgensi']
+    ]
+
+  # Proteksi kolom rekapitulasi kecamatan
+  t1_map = (
+      df_puskesmas[df_puskesmas['Tingkat_Urgensi'].str.contains('Tingkat 1')]
+      .groupby('Kecamatan')
+      .size()
+      .to_dict()
+  )
+  t2_map = (
+      df_puskesmas[df_puskesmas['Tingkat_Urgensi'].str.contains('Tingkat 2')]
+      .groupby('Kecamatan')
+      .size()
+      .to_dict()
+  )
+  t3_map = (
+      df_puskesmas[df_puskesmas['Tingkat_Urgensi'].str.contains('Tingkat 3')]
+      .groupby('Kecamatan')
+      .size()
+      .to_dict()
+  )
+
+  df_kecamatan['Tingkat_1'] = df_kecamatan['Kecamatan'].map(
+      lambda k: t1_map.get(k, 0)
+  )
+  df_kecamatan['Tingkat_2'] = df_kecamatan['Kecamatan'].map(
+      lambda k: t2_map.get(k, 0)
+  )
+  df_kecamatan['Tingkat_3'] = df_kecamatan['Kecamatan'].map(
+      lambda k: t3_map.get(k, 0)
+  )
+
+  return df_puskesmas, df_kecamatan
+
+
+@app.route('/')
+def index():
+  """Halaman Utama: Dashboard 24 Puskesmas Data Acuan."""
+  df_puskesmas, df_kecamatan = baca_data_acuan()
 
   puskesmas_list = df_puskesmas.to_dict(orient='records')
   kecamatan_list = df_kecamatan.to_dict(orient='records')
@@ -122,12 +176,7 @@ def upload():
 @app.route('/puskesmas/<nama>')
 def detail_puskesmas(nama):
   """Halaman Detail Profil Satu Puskesmas."""
-  excel_path = os.path.join(
-      os.path.dirname(__file__),
-      'data',
-      'Tabel_Final_Web_DSS_Puskesmas_2026.xlsx',
-  )
-  df_puskesmas = pd.read_excel(excel_path, sheet_name='Puskesmas')
+  df_puskesmas, _ = baca_data_acuan()
   row = df_puskesmas[
       df_puskesmas['Puskesmas'].str.upper() == nama.strip().upper()
   ]

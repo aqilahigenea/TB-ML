@@ -3,72 +3,59 @@
 
 {% block content %}
 
-<div class="row justify-content-center">
-    <div class="col-lg-8 col-md-10">
+<!-- Breadcrumb -->
+<nav class="mb-3" aria-label="breadcrumb">
+    <ol class="breadcrumb small">
+        <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color: var(--rg-primary);"><i class="bi bi-grid-1x2-fill me-1"></i>Dashboard</a></li>
+        <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Unggah Data Baru</li>
+    </ol>
+</nav>
 
-        <!-- Breadcrumb / Tombol Kembali -->
-        <nav class="mb-3" aria-label="breadcrumb">
-            <ol class="breadcrumb small">
-                <li class="breadcrumb-item"><a href="/" class="text-decoration-none" style="color: var(--rg-primary);"><i class="bi bi-grid-1x2-fill me-1"></i>Dashboard</a></li>
-                <li class="breadcrumb-item active text-dark fw-bold" aria-current="page">Unggah Data Baru</li>
-            </ol>
-        </nav>
+<!-- Header Halaman -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h4 class="fw-bold text-dark mb-0">Unggah Data Bulanan e-PPGBM</h4>
+    </div>
+    <div>
+        <a href="/" class="btn btn-rg-outline d-inline-flex align-items-center">
+            <i class="bi bi-arrow-left me-1"></i> Kembali ke Dashboard
+        </a>
+    </div>
+</div>
 
-        <!-- Wizard Langkah Alur Kerja -->
-        <div class="wizard-steps mb-4">
-            <div class="wizard-step active">
-                <div class="step-circle">1</div>
-                <div class="step-label">Pilih Berkas e-PPGBM</div>
-            </div>
-            <div class="wizard-step">
-                <div class="step-circle">2</div>
-                <div class="step-label">Pembersihan Otomatis</div>
-            </div>
-            <div class="wizard-step">
-                <div class="step-circle">3</div>
-                <div class="step-label">Pemetaan & Drift</div>
-            </div>
-        </div>
+<!-- Flash Alerts -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm rounded-3 py-3 mb-4" role="alert">
+        <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
 
-        <!-- Kartu Formulir Unggah -->
-        <div class="card card-saas p-4 p-md-5 mb-4">
-            
-            <div class="text-center mb-4">
-                <div class="d-inline-flex p-3 rounded-circle mb-3" style="background-color: var(--rg-primary-light); color: var(--rg-primary);">
-                    <i class="bi bi-cloud-arrow-up-fill fs-2"></i>
-                </div>
-                <h4 class="fw-bold text-dark mb-1">Unggah Data Bulanan e-PPGBM</h4>
-                <p class="text-secondary small mb-0">
-                    Sistem akan memvalidasi data anak balita, menghitung 5 indikator puskesmas, dan menghasilkan peringkat prioritas terkini.
-                </p>
-            </div>
-
-            <!-- Flash Alerts -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-              {% if messages %}
-                {% for category, message in messages %}
-                  <div class="alert alert-{{ category }} alert-dismissible fade show border-0 shadow-sm rounded-3 py-3" role="alert">
-                    <i class="bi bi-exclamation-circle-fill me-2"></i>{{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                  </div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
+<!-- Layout Lebar: Form Unggah (Kiri) & Tahapan Proses (Kanan) -->
+<div class="row g-4">
+    
+    <!-- Kolom Kiri: Formulir Dropzone Unggah Berkas -->
+    <div class="col-lg-7">
+        <div class="card card-saas p-4 h-100">
+            <h5 class="fw-bold text-dark mb-3">Formulir Unggah Berkas</h5>
 
             <form method="POST" enctype="multipart/form-data" id="uploadForm">
-                
-                <!-- Modern Dropzone Area -->
-                <div class="dropzone-rg mb-4" id="dropzone">
+                <!-- Dropzone Area -->
+                <div class="dropzone-rg mb-4" id="dropzone" style="min-height: 220px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
                     <input type="file" id="file" name="file" accept=".xlsx, .xls" class="d-none" required>
                     <div id="dropzoneContent">
                         <i class="bi bi-file-earmark-excel fs-1 text-success d-block mb-2"></i>
                         <span class="fw-bold text-dark d-block mb-1">Klik untuk memilih berkas atau seret ke sini</span>
-                        <span class="text-muted small d-block mb-3">Mendukung Microsoft Excel (.xlsx, .xls)</span>
+                        <span class="text-muted small d-block mb-3">Mendukung format Microsoft Excel (.xlsx, .xls)</span>
                         <button type="button" class="btn btn-rg-outline btn-sm px-3" onclick="document.getElementById('file').click()">
                             <i class="bi bi-folder2-open me-1"></i> Pilih Berkas dari Komputer
                         </button>
                     </div>
-                    <div id="fileSelectedInfo" class="d-none">
+                    <div id="fileSelectedInfo" class="d-none text-center">
                         <i class="bi bi-check-circle-fill fs-2 text-success d-block mb-2"></i>
                         <span class="fw-bold text-dark d-block" id="selectedFileName">nama_file.xlsx</span>
                         <span class="text-muted small d-block mb-2" id="selectedFileSize">0 KB</span>
@@ -78,24 +65,77 @@
                     </div>
                 </div>
 
-                <!-- Info Ketentuan Format -->
-                <div class="card p-3 mb-4 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
-                    <h6 class="fw-bold text-dark small mb-2"><i class="bi bi-info-circle-fill text-primary me-2"></i>Persyaratan Standar Berkas:</h6>
-                    <ul class="text-secondary small mb-0 ps-3">
-                        <li class="mb-1">Sheet utama bernama <code>Application List</code> (format resmi ekspor e-PPGBM).</li>
-                        <li class="mb-1">Kolom wajib: <em>Nama, Tgl Lahir, Pukesmas, Kec, Berat, Tinggi, ZS TB/U, Naik Berat Badan</em>.</li>
-                        <li>Wilayah pencatatan dibatasi hanya untuk <strong>KOTA PADANG</strong>.</li>
-                    </ul>
-                </div>
-
                 <button type="submit" class="btn btn-rg-primary btn-lg w-100 py-3 shadow-sm" id="submitBtn">
-                    <i class="bi bi-gear-wide-connected me-2"></i> Proses Data & Prediksi Prioritas
+                    <i class="bi bi-gear-wide-connected me-2"></i> Proses Data &amp; Prediksi Prioritas
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Kolom Kanan: Pembagian Tahapan & Ketentuan Berkas -->
+    <div class="col-lg-5">
+        <div class="d-flex flex-column gap-3">
+            
+            <!-- Card Pembagian Tahap Kerja Sistem -->
+            <div class="card card-saas p-4">
+                <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
+                    <i class="bi bi-diagram-3-fill me-1 text-success"></i> Alur Kerja Sistem Otomatis
+                </h6>
+                
+                <div class="d-flex flex-column gap-3">
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-success-subtle text-success rounded-circle p-2 mt-1" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            1
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Tahap 1: Validasi &amp; Pembersihan</div>
+                            <div class="text-secondary" style="font-size: 0.78rem;">
+                                Memeriksa kelengkapan kolom, menyaring balita usia 0–60 bulan Kota Padang, dan membuang data anomali ekstrem.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-success-subtle text-success rounded-circle p-2 mt-1" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            2
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Tahap 2: Agregasi 5 Indikator</div>
+                            <div class="text-secondary" style="font-size: 0.78rem;">
+                                Menghitung rasio stunting, wasting, gizi kurang, tren berat tidak naik (T), serta ibu hamil KEK untuk 24 puskesmas.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 align-items-start">
+                        <div class="badge bg-success-subtle text-success rounded-circle p-2 mt-1" style="width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold;">
+                            3
+                        </div>
+                        <div>
+                            <div class="fw-bold text-dark small">Tahap 3: Pemetaan &amp; Analisis Drift</div>
+                            <div class="text-secondary" style="font-size: 0.78rem;">
+                                Menghasilkan skor prioritas terkini dan mendeteksi pergeseran indikator (*data drift*) dibanding baseline Maret–Mei 2026.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Persyaratan Berkas -->
+            <div class="card card-saas p-3" style="background-color: #fafbfc;">
+                <h6 class="fw-bold text-dark small mb-2">
+                    <i class="bi bi-info-circle-fill text-primary me-1"></i> Persyaratan Format Berkas:
+                </h6>
+                <ul class="text-secondary mb-0 ps-3" style="font-size: 0.78rem; line-height: 1.5;">
+                    <li class="mb-1">Sheet utama bernama <code>Application List</code> (format resmi ekspor e-PPGBM).</li>
+                    <li class="mb-1">Kolom wajib: <em>Nama, Tgl Lahir, Pukesmas, Kec, Berat, Tinggi, ZS TB/U, Naik Berat Badan</em>.</li>
+                    <li>Wilayah data balita hanya untuk cakupan <strong>KOTA PADANG</strong>.</li>
+                </ul>
+            </div>
 
         </div>
-
     </div>
+
 </div>
 
 {% endblock %}
