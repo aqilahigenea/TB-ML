@@ -157,9 +157,9 @@
                                     <span class="fw-semibold text-dark">{{ p['Kelompok_Prioritas'].split(' - ')[0] }}</span>
                                     <span class="text-muted d-block" style="font-size: 0.75rem;">
                                         {% if 'Prioritas 1' in p['Kelompok_Prioritas'] %}
-                                            Krisis Balita & Bumil KEK
-                                        {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
                                             Beban Kasus Tinggi ({{ p['Kasus per sasaran balita'] }}%)
+                                        {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
+                                            Pertumbuhan Mandek & Balita Sangat Pendek
                                         {% else %}
                                             Indikator Terkendali
                                         {% endif %}

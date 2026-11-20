@@ -73,9 +73,9 @@
                 <div class="fw-bold text-dark fs-6">{{ p['Kelompok_Prioritas'].split(' - ')[0] }}</div>
                 <small class="text-muted">
                     {% if 'Prioritas 1' in p['Kelompok_Prioritas'] %}
-                        Krisis Balita Sangat Pendek & Risiko Ibu Hamil KEK
-                    {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
                         Beban Penemuan Kasus Balita Terbesar
+                    {% elif 'Prioritas 2' in p['Kelompok_Prioritas'] %}
+                        Pertumbuhan Balita Mandek & Balita Sangat Pendek
                     {% else %}
                         Indikator Berada di Bawah Rata-rata Kota
                     {% endif %}

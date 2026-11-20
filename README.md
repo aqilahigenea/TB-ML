@@ -1,7 +1,10 @@
 # Sistem Pendukung Keputusan (DSS) Prioritas Penanganan Stunting Kota Padang
 
 > **Tugas Besar Machine Learning — Kelompok 8, Departemen Sistem Informasi, Universitas Andalas**  
+
 > *Aplikasi Web Berbasis Python Flask & Machine Learning (K-Means Clustering)*
+
+> **Revisi Model v1.1 (Silhouette 0,268 → 0,502):** kelompok kini dibentuk dari **2 indikator inti** (Kasus per sasaran balita dan Persen berat tidak naik) dengan K-Means K=3 (titik awal pusat Ward). Kelima indikator tetap dipakai untuk Skor Urgensi, peringkat, dan profil kelompok. Hasil: Prioritas 1 = Beban Kasus Tinggi (5 puskesmas), Prioritas 2 = Pertumbuhan Mandek & Balita Sangat Pendek (8), Prioritas 3 = Pemantauan Rutin (11); Silhouette K=2/3/4 = 0,411/0,502/0,446; Davies-Bouldin 0,612; uji data acak p = 0,34 (tidak signifikan); bootstrap 23/24 Pasti (Pauh = Belum pasti). Angka dan tabel kelompok pada bagian 5-7 di bawah masih versi lama, dan ARI antarperiode harus dihitung ulang dengan menjalankan notebook.
 
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Framework](https://img.shields.io/badge/Framework-Flask%203.x-lightgrey.svg)](https://flask.palletsprojects.com/)

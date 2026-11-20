@@ -178,7 +178,8 @@ def proses_file_baru(file_path, paket_model):
   agg['Skor_Urgensi'] = z_scores.mean(axis=1).round(2)
 
   # Prediksi Klaster K-Means (Mode Relatif)
-  z_array = z_scores.to_numpy()
+  inti = paket_model.get('fitur_klaster_model', FITUR_KLASTER)
+  z_array = z_scores[inti].to_numpy()
   cluster_ids = paket_model['pipeline'].named_steps['kmeans'].predict(z_array)
   agg['Kelompok_Prioritas'] = pd.Series(cluster_ids).map(paket_model['mapping'])
 
@@ -189,7 +190,9 @@ def proses_file_baru(file_path, paket_model):
 
   # Status Kepastian (Pasti vs Belum pasti)
   agg['Status_Kepastian'] = np.where(
-      agg['Puskesmas'] == 'LUBUK KILANGAN', 'Belum pasti', 'Pasti'
+      agg['Puskesmas'].isin(paket_model.get('belum_pasti', [])),
+      'Belum pasti',
+      'Pasti',
   )
 
   # Urutkan berdasarkan Skor Urgensi (Peringkat 1 s.d. 24)
