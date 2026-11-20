@@ -16,7 +16,7 @@
             <h6 class="fw-bold text-dark mb-2"><i class="bi bi-chat-quote-fill me-2" style="color: var(--rg-primary);"></i>Cerita Utama Proyek Ini:</h6>
             <ol class="mb-0 ps-3 text-dark small" style="line-height: 1.6;">
                 <li class="mb-1"><strong>Data BNBA e-PPGBM</strong> dibersihkan dari nilai anomali, lalu diringkas menjadi <strong>5 indikator per puskesmas</strong>.</li>
-                <li class="mb-1"><strong>K-Means</strong> mengelompokkan 24 puskesmas berdasarkan <strong>2 indikator inti</strong> (kasus per sasaran balita dan persen berat tidak naik), lalu kelompok diberi nama prioritas intervensi.</li>
+                <li class="mb-1"><strong>K-Means</strong> mengelompokkan 24 puskesmas, lalu kelompok diberi nama prioritas intervensi.</li>
                 <li>Hasil diuji dengan <strong>4 cara pengujian</strong> dan disimpulkan secara jujur: <em>pola ada namun lemah</em>.</li>
             </ol>
         </div>
@@ -31,21 +31,21 @@
                 <div class="col-md-4">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
                         <div class="text-secondary small fw-bold">SILHOUETTE SCORE</div>
-                        <div class="fs-2 fw-bold text-dark my-1">0,502</div>
-                        <small class="text-muted d-block">Struktur Cukup, di batas bawah (rentang 0,51 &ndash; 0,70 Kaufman &amp; Rousseeuw)</small>
+                        <div class="fs-2 fw-bold text-dark my-1">0,268</div>
+                        <small class="text-muted d-block">Struktur Lemah (rentang 0,26 &ndash; 0,50 Kaufman &amp; Rousseeuw)</small>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
                         <div class="text-secondary small fw-bold">DAVIES-BOULDIN INDEX</div>
-                        <div class="fs-2 fw-bold text-dark my-1">0,612</div>
+                        <div class="fs-2 fw-bold text-dark my-1">1,234</div>
                         <small class="text-muted d-block">Rasio jarak dispersi dalam klaster vs jarak antarpusat klaster</small>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
                         <div class="text-secondary small fw-bold">UJI LAWAN DATA ACAK</div>
-                        <div class="fs-2 fw-bold text-danger my-1">p = 0,34</div>
+                        <div class="fs-2 fw-bold text-danger my-1">p = 0,146</div>
                         <small class="text-muted d-block">Tidak signifikan (nilai p &gt; 0,05), pola tidak membuktikan kelompok terisolasi alami</small>
                     </div>
                 </div>
@@ -56,7 +56,7 @@
                     <i class="bi bi-info-circle-fill text-primary mt-1"></i>
                     <div class="small text-secondary">
                         <strong class="text-dark">Mengapa Indeks Urgensi Komposit Menjadi Hasil Utama?</strong><br>
-                        Karena skor Silhouette hanya di batas cukup (0,502, dihitung pada 2 indikator inti) dan uji data acak tidak signifikan, data tidak membentuk klaster terpisah secara tajam di alam nyata; stunting di Kota Padang merupakan sebuah <strong>kontinum (gradien tingkat keparahan)</strong>. Oleh sebab itu, pemeringkatan 1 s.d. 24 berdasarkan rata-rata z-score (Indeks Urgensi Komposit) adalah panduan paling objektif bagi pengambil kebijakan Dinas Kesehatan.
+                        Karena skor Silhouette relatif lemah dan data tidak membentuk klaster terpisah secara tajam di alam nyata, stunting di Kota Padang merupakan sebuah <strong>kontinum (gradien tingkat keparahan)</strong>. Oleh sebab itu, pemeringkatan 1 s.d. 24 berdasarkan rata-rata z-score (Indeks Urgensi Komposit) adalah panduan paling objektif bagi pengambil kebijakan Dinas Kesehatan.
                     </div>
                 </div>
             </div>
@@ -84,8 +84,8 @@
                             <td class="text-center fw-bold text-muted">1</td>
                             <td class="fw-bold text-dark">Silhouette Score</td>
                             <td class="text-secondary">Apakah puskesmas lebih mirip kelompoknya sendiri dibanding kelompok lain?</td>
-                            <td class="fw-bold text-dark">0,502</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Struktur Cukup (batas bawah)</span></td>
+                            <td class="fw-bold text-dark">0,268</td>
+                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle">Struktur Lemah</span></td>
                         </tr>
                         <tr>
                             <td class="text-center fw-bold text-muted">2</td>
@@ -98,8 +98,8 @@
                             <td class="text-center fw-bold text-muted">3</td>
                             <td class="fw-bold text-dark">Adjusted Rand Index (ARI)</td>
                             <td class="text-secondary">Apakah klaster stabil bila dilatih dari periode bulan berbeda?</td>
-                            <td class="fw-bold text-dark">Perlu dihitung ulang</td>
-                            <td><span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">Jalankan notebook (Tahap 6)</span></td>
+                            <td class="fw-bold text-dark">0,381</td>
+                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle">Rendah (Butuh Rata-rata 3 Bln)</span></td>
                         </tr>
                         <tr>
                             <td class="text-center fw-bold text-muted">4</td>
@@ -122,9 +122,8 @@
             <ul class="text-secondary small mb-0 ps-3" style="line-height: 1.6;">
                 <li class="mb-2"><strong>Data Acuan Hanya Potret 3 Bulan:</strong> Dataset acuan mencakup Maret &ndash; Mei 2026, sehingga mencerminkan potret jangka pendek, bukan tren multi-tahun. Disarankan memperbarui data secara berkala tiap kuartal melalui modul unggah.</li>
                 <li class="mb-2"><strong>Karakteristik Data e-PPGBM:</strong> Berkas e-PPGBM hanya memuat balita yang tercatat saat pengukuran posyandu. Tingkat kelengkapan partisipasi masyarakat (D/S) memengaruhi volume penemuan kasus.</li>
-                <li class="mb-2"><strong>Kelompok Dibentuk dari 2 Indikator:</strong> Pengelompokan K-Means memakai kasus per sasaran balita dan persen berat tidak naik. Tiga indikator lain (sangat pendek, stunting + kurus, bumil KEK) tetap dipakai pada Skor Urgensi dan profil kelompok, tetapi tidak membentuk kelompok.</li>
                 <li class="mb-2"><strong>Ketiadaan Data Determinan Sosial:</strong> Variabel determinan penting seperti akses air bersih/sanitasi, tingkat kemiskinan keluarga, dan riwayat ASI eksklusif belum tersedia pada tingkat agregasi per puskesmas.</li>
-                <li><strong>Status Puskesmas Perbatasan:</strong> Puskesmas Pauh berstatus <em>Belum pasti</em> karena letak karakteristiknya berada di batas pemisah klaster; intervensi di puskesmas ini harus mempertimbangkan dinamika lapangan.</li>
+                <li><strong>Status Puskesmas Perbatasan:</strong> Puskesmas Lubuk Kilangan berstatus <em>Belum pasti</em> karena letak karakteristiknya berada di batas pemisah klaster; intervensi di puskesmas ini harus mempertimbangkan dinamika lapangan.</li>
             </ul>
         </div>
 
