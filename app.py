@@ -186,8 +186,15 @@ def detail_puskesmas(nama):
     return redirect(url_for('index'))
 
   p_data = row.iloc[0].to_dict()
+  fts_dasar = MODEL_PAKET.get('features_dasar', [
+      'Kasus per sasaran balita',
+      'Persen sangat pendek',
+      'Persen stunting + kurus',
+      'Persen berat tidak naik',
+      'Persen bumil KEK',
+  ])
   rerata_kota = (
-      df_puskesmas[MODEL_PAKET['features']].mean().round(2).to_dict()
+      df_puskesmas[fts_dasar].mean().round(2).to_dict()
   )
 
   return render_template('detail.html', p=p_data, rerata=rerata_kota)
@@ -198,11 +205,17 @@ def cek_manual():
   """Halaman Cek Manual / Simulasi Satu Puskesmas."""
   hasil = None
   input_data = {}
-  fts = MODEL_PAKET['features']
+  fts_dasar = MODEL_PAKET.get('features_dasar', [
+      'Kasus per sasaran balita',
+      'Persen sangat pendek',
+      'Persen stunting + kurus',
+      'Persen berat tidak naik',
+      'Persen bumil KEK',
+  ])
   ref_rerata = MODEL_PAKET.get('referensi_fitur', {}).get('rerata', {})
   if not ref_rerata:
     scaler = MODEL_PAKET['pipeline'].named_steps['scaler']
-    ref_rerata = dict(zip(fts, [round(float(m), 2) for m in scaler.mean_]))
+    ref_rerata = dict(zip(MODEL_PAKET['features'], [round(float(m), 2) for m in scaler.mean_]))
 
   if request.method == 'POST':
     try:
@@ -213,7 +226,7 @@ def cek_manual():
         nama_puskesmas = 'Puskesmas Simulasi'
 
       fitur_input = {}
-      for f in fts:
+      for f in fts_dasar:
         val = request.form.get(f, '').replace(',', '.')
         fitur_input[f] = float(val)
 
@@ -228,7 +241,7 @@ def cek_manual():
       'cek_manual.html',
       hasil=hasil,
       input_data=input_data,
-      features=fts,
+      features=fts_dasar,
       rerata_kota=ref_rerata,
   )
 

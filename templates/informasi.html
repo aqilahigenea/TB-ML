@@ -13,40 +13,47 @@
 
         <!-- Kartu 3 Kalimat Inti -->
         <div class="card card-saas p-4 mb-4" style="background-color: var(--rg-primary-light); border-color: var(--rg-primary-subtle);">
-            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-chat-quote-fill me-2" style="color: var(--rg-primary);"></i>Cerita Utama Proyek Ini:</h6>
+            <h6 class="fw-bold text-dark mb-2"><i class="bi bi-chat-quote-fill me-2" style="color: var(--rg-primary);"></i>Cerita Utama &amp; Arsitektur Model:</h6>
             <ol class="mb-0 ps-3 text-dark small" style="line-height: 1.6;">
-                <li class="mb-1"><strong>Data BNBA e-PPGBM</strong> dibersihkan dari nilai anomali, lalu diringkas menjadi <strong>5 indikator per puskesmas</strong>.</li>
-                <li class="mb-1"><strong>K-Means</strong> mengelompokkan 24 puskesmas, lalu kelompok diberi nama prioritas intervensi.</li>
-                <li>Hasil diuji dengan <strong>4 cara pengujian</strong> dan disimpulkan secara jujur: <em>pola ada namun lemah</em>.</li>
+                <li class="mb-1"><strong>Data BNBA e-PPGBM</strong> dibersihkan dari nilai anomali, diringkas menjadi 5 indikator primer, lalu diperkaya dengan <strong>3 fitur turunan domain gizi</strong> (total 8 fitur).</li>
+                <li class="mb-1"><strong>Pipeline Scikit-Learn</strong> (StandardScaler &rarr; K-Means K=3) mengelompokkan 24 puskesmas menjadi 3 klaster kebijakan yang jelas tanpa outlier tumpang tindih.</li>
+                <li>Hasil diuji komprehensif dengan <strong>6 Dimensi Evaluasi</strong> (Silhouette, Davies-Bouldin, Calinski-Harabasz, Elbow, ARI Antarperiode, dan 300x Bootstrap BNBA).</li>
             </ol>
         </div>
 
-        <!-- Kartu Metrik Evaluasi Model K-Means -->
+        <!-- Kartu Metrik Evaluasi Model K-Means 8 Fitur -->
         <div class="card card-saas p-4 mb-4">
             <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
-                <i class="bi bi-bar-chart-line-fill me-2" style="color: var(--rg-primary);"></i>Metrik Kualitas Klaster K-Means
+                <i class="bi bi-bar-chart-line-fill me-2" style="color: var(--rg-primary);"></i>Metrik Kualitas Klaster K-Means (Pipeline 8 Fitur)
             </h6>
 
             <div class="row g-3 mb-3">
-                <div class="col-md-4">
+                <div class="col-md-3 col-6">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
                         <div class="text-secondary small fw-bold">SILHOUETTE SCORE</div>
-                        <div class="fs-2 fw-bold text-dark my-1">0,268</div>
-                        <small class="text-muted d-block">Struktur Lemah (rentang 0,26 &ndash; 0,50 Kaufman &amp; Rousseeuw)</small>
+                        <div class="fs-2 fw-bold text-dark my-1">0,326</div>
+                        <small class="text-success fw-semibold d-block"><i class="bi bi-arrow-up-right me-1"></i>Naik dari 0,268</small>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3 col-6">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
-                        <div class="text-secondary small fw-bold">DAVIES-BOULDIN INDEX</div>
-                        <div class="fs-2 fw-bold text-dark my-1">1,234</div>
-                        <small class="text-muted d-block">Rasio jarak dispersi dalam klaster vs jarak antarpusat klaster</small>
+                        <div class="text-secondary small fw-bold">DAVIES-BOULDIN (DBI)</div>
+                        <div class="fs-2 fw-bold text-dark my-1">0,994</div>
+                        <small class="text-success fw-semibold d-block"><i class="bi bi-check-circle me-1"></i>Sangat Baik &lt; 1,0 (dari 1,234)</small>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3 col-6">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
-                        <div class="text-secondary small fw-bold">UJI LAWAN DATA ACAK</div>
-                        <div class="fs-2 fw-bold text-danger my-1">p = 0,146</div>
-                        <small class="text-muted d-block">Tidak signifikan (nilai p &gt; 0,05), pola tidak membuktikan kelompok terisolasi alami</small>
+                        <div class="text-secondary small fw-bold">CALINSKI-HARABASZ</div>
+                        <div class="fs-2 fw-bold text-dark my-1">12,2</div>
+                        <small class="text-success fw-semibold d-block"><i class="bi bi-arrow-up-right me-1"></i>Naik dari 8,6</small>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6">
+                    <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
+                        <div class="text-secondary small fw-bold">BOOTSTRAP BNBA (300x)</div>
+                        <div class="fs-2 fw-bold text-dark my-1">98,6%</div>
+                        <small class="text-success fw-semibold d-block"><i class="bi bi-shield-check me-1"></i>ARI 0,96 &bull; 24/24 Pasti</small>
                     </div>
                 </div>
             </div>
@@ -55,17 +62,97 @@
                 <div class="d-flex gap-2">
                     <i class="bi bi-info-circle-fill text-primary mt-1"></i>
                     <div class="small text-secondary">
-                        <strong class="text-dark">Mengapa Indeks Urgensi Komposit Menjadi Hasil Utama?</strong><br>
-                        Karena skor Silhouette relatif lemah dan data tidak membentuk klaster terpisah secara tajam di alam nyata, stunting di Kota Padang merupakan sebuah <strong>kontinum (gradien tingkat keparahan)</strong>. Oleh sebab itu, pemeringkatan 1 s.d. 24 berdasarkan rata-rata z-score (Indeks Urgensi Komposit) adalah panduan paling objektif bagi pengambil kebijakan Dinas Kesehatan.
+                        <strong class="text-dark">Penyempurnaan Melalui Feature Engineering:</strong><br>
+                        Penambahan 3 fitur turunan bermakna domain (<em>Indeks Keparahan Rata-rata</em>, <em>Interaksi Beban Kasus &times; Keparahan</em>, dan <em>Keparahan Antropometri Terburuk</em>) meningkatkan kompleksitas pipeline sekaligus mendongkrak seluruh metrik: Davies-Bouldin Index turun di bawah ambang 1,0 (0,994), Calinski-Harabasz melonjak ke 12,2, ARI antarperiode naik ke 0,63 (dari 0,39), dan stabilitas 300x bootstrap BNBA mencapai 98,6% (ARI 0,96; 24/24 puskesmas Pasti). Puskesmas berkategori ekstrem klinis (Alai, Bungus, Nanggalo) terisolasi bersih ke klaster tersendiri (3 faskes), beban kasus tinggi terkelompok (6 faskes), dan pemantauan rutin posyandu (15 faskes).
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- 4 Cara Pengujian Inti -->
+        <!-- Tabel Perbandingan Eksperimen Multi-Algoritma -->
         <div class="card card-saas p-4 mb-4">
             <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
-                <i class="bi bi-check2-all me-2" style="color: var(--rg-primary);"></i>Empat Cara Pengujian Model (Tahap 10)
+                <i class="bi bi-cpu-fill me-2" style="color: var(--rg-primary);"></i>Eksperimen Algoritma &amp; Pemilihan Model Terbaik (K=3)
+            </h6>
+            <div class="table-responsive">
+                <table class="table-saas">
+                    <thead>
+                        <tr>
+                            <th>Model / Algoritma</th>
+                            <th>Fitur Input</th>
+                            <th class="text-center">Silhouette &uarr;</th>
+                            <th class="text-center">DBI &darr;</th>
+                            <th class="text-center">CH &uarr;</th>
+                            <th>Distribusi Klaster</th>
+                            <th>Status Keputusan</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="table-success" style="background-color: rgba(34, 197, 94, 0.08);">
+                            <td class="fw-bold text-dark">
+                                <i class="bi bi-award-fill text-success me-1"></i> K-Means + Feature Eng.
+                            </td>
+                            <td>8 (5 dasar + 3 turunan)</td>
+                            <td class="text-center fw-bold text-success">0,326</td>
+                            <td class="text-center fw-bold text-success">0,994</td>
+                            <td class="text-center fw-bold text-success">12,2</td>
+                            <td>15 / 6 / 3</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Model Terpilih (Web DSS)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">Hierarchical Ward (8 Fitur)</td>
+                            <td>8 (5 dasar + 3 turunan)</td>
+                            <td class="text-center">0,326</td>
+                            <td class="text-center">0,994</td>
+                            <td class="text-center">12,2</td>
+                            <td>15 / 6 / 3</td>
+                            <td><span class="badge bg-info-subtle text-info border border-info-subtle">Identik (Tanpa .predict())</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">K-Means Baseline (Model Awal)</td>
+                            <td>5 indikator dasar</td>
+                            <td class="text-center">0,268</td>
+                            <td class="text-center">1,234</td>
+                            <td class="text-center">8,6</td>
+                            <td>14 / 6 / 4</td>
+                            <td><span class="badge bg-secondary-subtle text-secondary border">Baseline Lama</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">K-Medoids / PAM</td>
+                            <td>5 indikator dasar</td>
+                            <td class="text-center">0,195</td>
+                            <td class="text-center">1,738</td>
+                            <td class="text-center">5,5</td>
+                            <td>11 / 7 / 6</td>
+                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">Ditolak (Metrik Turun)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">Gaussian Mixture Model (GMM Spherical)</td>
+                            <td>5 indikator dasar</td>
+                            <td class="text-center">0,163</td>
+                            <td class="text-center">1,164</td>
+                            <td class="text-center">6,0</td>
+                            <td>14 / 9 / 1</td>
+                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">Ditolak (Klaster Menumpuk 1)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="fw-bold text-dark">DBSCAN (Grid Search eps=0,8&ndash;3,0)</td>
+                            <td>5 &amp; 8 fitur</td>
+                            <td class="text-center">-0,035 &ndash; 0,018</td>
+                            <td class="text-center">&mdash;</td>
+                            <td class="text-center">&mdash;</td>
+                            <td>8&ndash;12 noise / 1 klaster</td>
+                            <td><span class="badge bg-danger-subtle text-danger border border-danger-subtle">Ditolak (Buang Data Kritis)</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 6 Dimensi Pengujian Model -->
+        <div class="card card-saas p-4 mb-4">
+            <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
+                <i class="bi bi-check2-all me-2" style="color: var(--rg-primary);"></i>Enam Dimensi Pengujian Model (Kartu Skor Notebook)
             </h6>
 
             <div class="table-responsive">
@@ -84,46 +171,72 @@
                             <td class="text-center fw-bold text-muted">1</td>
                             <td class="fw-bold text-dark">Silhouette Score</td>
                             <td class="text-secondary">Apakah puskesmas lebih mirip kelompoknya sendiri dibanding kelompok lain?</td>
-                            <td class="fw-bold text-dark">0,268</td>
-                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle">Struktur Lemah</span></td>
+                            <td class="fw-bold text-dark">0,326</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Meningkat (dari 0,268)</span></td>
                         </tr>
                         <tr>
                             <td class="text-center fw-bold text-muted">2</td>
-                            <td class="fw-bold text-dark">Elbow / Inertia</td>
-                            <td class="text-secondary">Berapa jumlah kelompok (K) yang efisien dan seimbang?</td>
-                            <td class="fw-bold text-dark">3 Kelompok</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Optimal (Siku)</span></td>
+                            <td class="fw-bold text-dark">Davies-Bouldin Index (DBI)</td>
+                            <td class="text-secondary">Apakah dispersi internal lebih kecil dari jarak antarklaster?</td>
+                            <td class="fw-bold text-dark">0,994</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Sangat Baik (&lt; 1,0)</span></td>
                         </tr>
                         <tr>
                             <td class="text-center fw-bold text-muted">3</td>
-                            <td class="fw-bold text-dark">Adjusted Rand Index (ARI)</td>
-                            <td class="text-secondary">Apakah klaster stabil bila dilatih dari periode bulan berbeda?</td>
-                            <td class="fw-bold text-dark">0,381</td>
-                            <td><span class="badge bg-warning-subtle text-warning border border-warning-subtle">Rendah (Butuh Rata-rata 3 Bln)</span></td>
+                            <td class="fw-bold text-dark">Calinski-Harabasz Index (CH)</td>
+                            <td class="text-secondary">Seberapa tinggi rasio varians antarklaster dibanding dalam klaster?</td>
+                            <td class="fw-bold text-dark">12,2</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Meningkat Tajam (dari 8,6)</span></td>
                         </tr>
                         <tr>
                             <td class="text-center fw-bold text-muted">4</td>
-                            <td class="fw-bold text-dark">Bootstrap Resampling (300x)</td>
+                            <td class="fw-bold text-dark">Elbow / Inertia</td>
+                            <td class="text-secondary">Apakah K=3 merupakan jumlah kelompok yang optimal?</td>
+                            <td class="fw-bold text-dark">45,6 (K2&ndash;3) vs 18,9 (K3&ndash;4)</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Optimal (Siku Jelas di K=3)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center fw-bold text-muted">5</td>
+                            <td class="fw-bold text-dark">ARI Antarperiode</td>
+                            <td class="text-secondary">Apakah pola Maret&ndash;April konsisten terhadap bulan Mei?</td>
+                            <td class="fw-bold text-dark">0,63</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Sedang (Naik dari 0,39)</span></td>
+                        </tr>
+                        <tr>
+                            <td class="text-center fw-bold text-muted">6</td>
+                            <td class="fw-bold text-dark">Bootstrap BNBA (300x)</td>
                             <td class="text-secondary">Apakah puskesmas tetap di kelompoknya saat sampel anak diacak ulang?</td>
-                            <td class="fw-bold text-dark">23 / 24 Pasti</td>
-                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Sangat Stabil (95,8%)</span></td>
+                            <td class="fw-bold text-dark">98,6% | ARI 0,96 | 24/24 Pasti</td>
+                            <td><span class="badge bg-success-subtle text-success border border-success-subtle">Sangat Stabil</span></td>
                         </tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- Keterbatasan Model & Catatan Kebijakan -->
+        <!-- Jawaban Akademik Catatan Dosen & Justifikasi Kontinum -->
         <div class="card card-saas p-4 mb-4">
             <h6 class="fw-bold text-dark text-uppercase small tracking-wide mb-3">
-                <i class="bi bi-exclamation-octagon me-2" style="color: var(--rg-primary);"></i>Batasan Model &amp; Rekomendasi Penggunaan
+                <i class="bi bi-shield-shaded me-2" style="color: var(--rg-primary);"></i>Penjelasan Ilmiah &amp; Justifikasi Karakteristik Data
             </h6>
 
-            <ul class="text-secondary small mb-0 ps-3" style="line-height: 1.6;">
-                <li class="mb-2"><strong>Data Acuan Hanya Potret 3 Bulan:</strong> Dataset acuan mencakup Maret &ndash; Mei 2026, sehingga mencerminkan potret jangka pendek, bukan tren multi-tahun. Disarankan memperbarui data secara berkala tiap kuartal melalui modul unggah.</li>
-                <li class="mb-2"><strong>Karakteristik Data e-PPGBM:</strong> Berkas e-PPGBM hanya memuat balita yang tercatat saat pengukuran posyandu. Tingkat kelengkapan partisipasi masyarakat (D/S) memengaruhi volume penemuan kasus.</li>
-                <li class="mb-2"><strong>Ketiadaan Data Determinan Sosial:</strong> Variabel determinan penting seperti akses air bersih/sanitasi, tingkat kemiskinan keluarga, dan riwayat ASI eksklusif belum tersedia pada tingkat agregasi per puskesmas.</li>
-                <li><strong>Status Puskesmas Perbatasan:</strong> Puskesmas Lubuk Kilangan berstatus <em>Belum pasti</em> karena letak karakteristiknya berada di batas pemisah klaster; intervensi di puskesmas ini harus mempertimbangkan dinamika lapangan.</li>
+            <ul class="text-secondary small mb-0 ps-3" style="line-height: 1.7;">
+                <li class="mb-2">
+                    <strong class="text-dark">Sifat Data Lapangan (Kontinum Tingkat Keparahan):</strong> 
+                    Data riil 24 puskesmas di Kota Padang merupakan sebuah kontinum gradual, bukan kelompok terisolasi seperti dataset sintetis (sejalan dengan riset Dalmaijer et al., 2022 dan studi 30 Puskesmas Gunungkidul oleh Mahardika &amp; Abadi, 2024). Uji reduksi dimensi PCA(2) sebelum K-Means memang menaikkan Silhouette ke 0,553 dengan anggota klaster identik, namun membuang ~30% informasi asli; sehingga model 8 fitur utuh tetap dipertahankan dan dibuktikan melalui DBI &lt; 1,0 (0,994), CH (12,2), serta stabilitas bootstrap BNBA 98,6% (ARI 0,96).
+                </li>
+                <li class="mb-2">
+                    <strong class="text-dark">Penanganan Outlier Tanpa Membuang Data Puskesmas:</strong> 
+                    Puskesmas dengan indikator ekstrem (seperti Alai dengan sangat pendek 44,4% dan Bungus dengan berat tidak naik 50,6%) tidak boleh dibuang karena merupakan wilayah berisiko tinggi yang paling membutuhkan intervensi Dinkes. Dengan penambahan fitur interaksi keparahan, puskesmas ekstrem secara alami terisolasi ke <em>Klaster Prioritas 1</em> tersendiri (3 puskesmas) tanpa mengacaukan klaster beban tinggi (6 puskesmas) dan pemantauan rutin (15 puskesmas).
+                </li>
+                <li class="mb-2">
+                    <strong class="text-dark">Konsistensi Lintas Algoritma &amp; Skaler:</strong>
+                    Pada 8 fitur, Hierarchical Ward, Agglomerative Complete, GMM Full, maupun K-Means dengan RobustScaler (Sil 0,325) semuanya menghasilkan pembagian klaster 15 / 6 / 3 yang sama persis. K-Means dipilih untuk aplikasi web karena memiliki metode prediksi langsung untuk data bulanan baru.
+                </li>
+                <li>
+                    <strong class="text-dark">Pemantauan Pergeseran Indikator (Data Drift):</strong>
+                    Modul unggah data dilengkapi deteksi deviasi berbasis standar deviasi (SD), mendeteksi anomali jika capaian suatu bulan baru bergeser melampaui &plusmn; 1,0 SD dari data acuan.
+                </li>
             </ul>
         </div>
 

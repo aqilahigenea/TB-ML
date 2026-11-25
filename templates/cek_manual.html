@@ -213,6 +213,36 @@
                 </table>
             </div>
 
+            <!-- Fitur Turunan yang Dihitung Otomatis (Feature Engineering) -->
+            {% if hasil.turunan %}
+            <div class="mt-3 p-3 rounded-3" style="background-color: #f8fafc; border: 1px solid var(--rg-border);">
+                <div class="d-flex align-items-center gap-1 mb-2">
+                    <i class="bi bi-gear-wide-connected text-primary"></i>
+                    <strong class="text-dark small">Fitur Turunan (Feature Engineering):</strong>
+                </div>
+                <div class="row g-2 text-center" style="font-size: 0.775rem;">
+                    <div class="col-4">
+                        <div class="p-2 bg-white rounded border">
+                            <span class="text-muted d-block" style="font-size: 0.7rem;">Indeks Rata-rata</span>
+                            <span class="fw-bold text-dark">{{ hasil.turunan['Indeks keparahan rata-rata'] }}%</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 bg-white rounded border">
+                            <span class="text-muted d-block" style="font-size: 0.7rem;">Interaksi Beban &times; Keparahan</span>
+                            <span class="fw-bold text-dark">{{ hasil.turunan['Interaksi beban kasus x keparahan'] }}</span>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="p-2 bg-white rounded border">
+                            <span class="text-muted d-block" style="font-size: 0.7rem;">Antropometri Terburuk</span>
+                            <span class="fw-bold text-dark">{{ hasil.turunan['Keparahan antropometri terburuk'] }}%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
         </div>
         {% else %}
         <!-- Placeholder State Sebelum Dihitung -->

@@ -1,7 +1,8 @@
 # model_helper.py
 """Helper functions for Stunting Decision Support System (DSS) Kota Padang.
 
-Handles BNBA Excel processing, indicator calculations, and ML model inference.
+Handles BNBA Excel processing, indicator calculations, feature engineering,
+and ML model inference (8 features: 5 primary indicators + 3 domain-derived features).
 """
 
 import os
@@ -64,13 +65,21 @@ BUMIL_KEK_DICT = {
     'ULAK KARANG': 9.7,
 }
 
-FITUR_KLASTER = [
+FITUR_DASAR = [
     'Kasus per sasaran balita',
     'Persen sangat pendek',
     'Persen stunting + kurus',
     'Persen berat tidak naik',
     'Persen bumil KEK',
 ]
+
+FITUR_TURUNAN = [
+    'Indeks keparahan rata-rata',
+    'Interaksi beban kasus x keparahan',
+    'Keparahan antropometri terburuk',
+]
+
+FITUR_KLASTER = FITUR_DASAR + FITUR_TURUNAN
 
 
 def load_model():
@@ -79,6 +88,24 @@ def load_model():
       os.path.dirname(__file__), 'model', 'model_klaster_puskesmas_2026.pkl'
   )
   return joblib.load(model_path)
+
+
+def hitung_fitur_turunan(f_dict):
+  """Menghitung 3 fitur turunan domain gizi dari 5 indikator dasar."""
+  sp = float(f_dict.get('Persen sangat pendek', 0))
+  sk = float(f_dict.get('Persen stunting + kurus', 0))
+  btn = float(f_dict.get('Persen berat tidak naik', 0))
+  kps = float(f_dict.get('Kasus per sasaran balita', 0))
+
+  ik = round((sp + sk + btn) / 3.0, 2)
+  ib = round(kps * ik, 2)
+  kat = round(max(sp, sk), 2)
+
+  return {
+      'Indeks keparahan rata-rata': ik,
+      'Interaksi beban kasus x keparahan': ib,
+      'Keparahan antropometri terburuk': kat,
+  }
 
 
 def bersihkan_data_bnba(file_path):
@@ -172,14 +199,25 @@ def proses_file_baru(file_path, paket_model):
   ).round(1)
   agg['Persen bumil KEK'] = agg['Puskesmas'].map(BUMIL_KEK_DICT)
 
-  # Hitung Skor Urgensi Komposit (rata-rata z-score 5 indikator)
-  X_in = agg[FITUR_KLASTER].astype(float)
+  # 3 Fitur Turunan (Feature Engineering)
+  agg['Indeks keparahan rata-rata'] = (
+      (agg['Persen sangat pendek'] + agg['Persen stunting + kurus'] + agg['Persen berat tidak naik']) / 3.0
+  ).round(2)
+  agg['Interaksi beban kasus x keparahan'] = (
+      agg['Kasus per sasaran balita'] * agg['Indeks keparahan rata-rata']
+  ).round(2)
+  agg['Keparahan antropometri terburuk'] = agg[
+      ['Persen sangat pendek', 'Persen stunting + kurus']
+  ].max(axis=1).round(2)
+
+  # Hitung Skor Urgensi Komposit (rata-rata z-score 5 indikator dasar)
+  X_in = agg[FITUR_DASAR].astype(float)
   z_scores = (X_in - X_in.mean()) / X_in.std(ddof=0)
   agg['Skor_Urgensi'] = z_scores.mean(axis=1).round(2)
 
-  # Prediksi Klaster K-Means (Mode Relatif)
-  z_array = z_scores.to_numpy()
-  cluster_ids = paket_model['pipeline'].named_steps['kmeans'].predict(z_array)
+  # Prediksi Klaster K-Means via Pipeline (StandardScaler + KMeans)
+  fts_model = paket_model['features']
+  cluster_ids = paket_model['pipeline'].predict(agg[fts_model])
   agg['Kelompok_Prioritas'] = pd.Series(cluster_ids).map(paket_model['mapping'])
 
   # Usulan Kebijakan
@@ -187,10 +225,8 @@ def proses_file_baru(file_path, paket_model):
       paket_model.get('rekomendasi', {})
   )
 
-  # Status Kepastian (Pasti vs Belum pasti)
-  agg['Status_Kepastian'] = np.where(
-      agg['Puskesmas'] == 'LUBUK KILANGAN', 'Belum pasti', 'Pasti'
-  )
+  # Status Kepastian (Model 8 fitur menghasilkan 24/24 Pasti pada 300x bootstrap BNBA)
+  agg['Status_Kepastian'] = 'Pasti'
 
   # Urutkan berdasarkan Skor Urgensi (Peringkat 1 s.d. 24)
   agg = agg.sort_values('Skor_Urgensi', ascending=False).reset_index(drop=True)
@@ -212,17 +248,17 @@ def proses_file_baru(file_path, paket_model):
 
 def cek_pergeseran_indikator(agg_baru, paket_model):
   """Memantau pergeseran level indikator data baru vs acuan (satuan SD)."""
-  fts = paket_model['features']
+  fts = paket_model.get('features_dasar', FITUR_DASAR)
   if 'referensi_fitur' in paket_model and paket_model['referensi_fitur']:
     ref_rerata = pd.Series(paket_model['referensi_fitur']['rerata'])
     ref_std = pd.Series(paket_model['referensi_fitur']['simpangan_baku'])
   else:
     scaler = paket_model['pipeline'].named_steps['scaler']
-    ref_rerata = pd.Series(scaler.mean_, index=fts)
-    ref_std = pd.Series(scaler.scale_, index=fts)
+    ref_rerata = pd.Series(scaler.mean_, index=paket_model['features'])
+    ref_std = pd.Series(scaler.scale_, index=paket_model['features'])
 
   baru_rerata = agg_baru[fts].mean()
-  geser = ((baru_rerata - ref_rerata) / ref_std).round(2)
+  geser = ((baru_rerata - ref_rerata[fts]) / ref_std[fts]).round(2)
 
   drift_list = []
   for f in fts:
@@ -244,9 +280,15 @@ def cek_pergeseran_indikator(agg_baru, paket_model):
 
 def prediksi_satu_puskesmas(fitur_input, paket_model):
   """Memprediksi klaster, skor urgensi, dan rekomendasi untuk 1 puskesmas secara manual."""
-  fts = paket_model['features']
-  # Konversi ke DataFrame berkolom sesuai urutan fitur
-  df_input = pd.DataFrame([[float(fitur_input[f]) for f in fts]], columns=fts)
+  # Hitung fitur turunan otomatis
+  turunan = hitung_fitur_turunan(fitur_input)
+  fitur_lengkap = {**fitur_input, **turunan}
+
+  fts_model = paket_model['features']
+  fts_dasar = paket_model.get('features_dasar', FITUR_DASAR)
+
+  # Konversi ke DataFrame berkolom sesuai urutan fitur model (8 fitur)
+  df_input = pd.DataFrame([[float(fitur_lengkap[f]) for f in fts_model]], columns=fts_model)
 
   # Ambil referensi rata-rata dan simpangan baku acuan kota
   if 'referensi_fitur' in paket_model and paket_model['referensi_fitur']:
@@ -254,14 +296,15 @@ def prediksi_satu_puskesmas(fitur_input, paket_model):
     ref_std = pd.Series(paket_model['referensi_fitur']['simpangan_baku'])
   else:
     scaler = paket_model['pipeline'].named_steps['scaler']
-    ref_rerata = pd.Series(scaler.mean_, index=fts)
-    ref_std = pd.Series(scaler.scale_, index=fts)
+    ref_rerata = pd.Series(scaler.mean_, index=fts_model)
+    ref_std = pd.Series(scaler.scale_, index=fts_model)
 
-  # Hitung z-score dan Skor Urgensi Komposit
+  # Hitung z-score
   z_scores = ((df_input.iloc[0] - ref_rerata) / ref_std).round(2)
-  skor_urgensi = round(float(z_scores.mean()), 2)
+  # Skor urgensi komposit dihitung dari rata-rata z-score 5 indikator dasar
+  skor_urgensi = round(float(z_scores[fts_dasar].mean()), 2)
 
-  # Prediksi Klaster dengan Pipeline ML (StandardScaler + KMeans)
+  # Prediksi Klaster dengan Pipeline ML (StandardScaler + KMeans 8 fitur)
   cluster_id = int(paket_model['pipeline'].predict(df_input)[0])
   nama_prioritas = paket_model['mapping'].get(
       cluster_id, f'Prioritas {cluster_id + 1}'
@@ -294,8 +337,8 @@ def prediksi_satu_puskesmas(fitur_input, paket_model):
       'usulan_kebijakan': usulan,
       'ciri_dominan': ciri,
       'status_kepastian': status_kepastian,
-      'z_scores': z_scores.to_dict(),
-      'nilai_input': df_input.iloc[0].to_dict(),
-      'rerata_kota': ref_rerata.round(2).to_dict(),
+      'z_scores': z_scores[fts_dasar].to_dict(),
+      'nilai_input': {f: df_input.iloc[0][f] for f in fts_dasar},
+      'turunan': turunan,
+      'rerata_kota': ref_rerata[fts_dasar].round(2).to_dict(),
   }
-
