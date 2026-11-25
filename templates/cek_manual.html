@@ -81,7 +81,7 @@
 
                 <div class="mb-3">
                     <label for="sp" class="form-label fw-bold text-dark small d-flex justify-content-between">
-                        <span>2. Persen Sangat Pendek / Severe Stunting (%)</span>
+                        <span>2. Balita Sangat Pendek (%)</span>
                         <span class="text-muted fw-normal">Rerata Kota: {{ rerata_kota.get('Persen sangat pendek', 23.11) }}%</span>
                     </label>
                     <div class="input-group">
@@ -94,7 +94,7 @@
 
                 <div class="mb-3">
                     <label for="sw" class="form-label fw-bold text-dark small d-flex justify-content-between">
-                        <span>3. Persen Stunting + Kurus / Wasting (%)</span>
+                        <span>3. Balita Stunting &amp; Kurus (%)</span>
                         <span class="text-muted fw-normal">Rerata Kota: {{ rerata_kota.get('Persen stunting + kurus', 17.95) }}%</span>
                     </label>
                     <div class="input-group">
@@ -145,7 +145,7 @@
         <div class="card card-saas p-4 h-100">
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <span class="badge-status-pasti"><i class="bi bi-check-circle-fill me-1 text-success"></i> Prediksi Berhasil</span>
-                <span class="text-muted small">Hasil Inferensi Model</span>
+                <span class="text-muted small">Hasil Prediksi Prioritas</span>
             </div>
 
             <h4 class="fw-bold text-dark mb-1">{{ hasil.nama_puskesmas }}</h4>
@@ -159,11 +159,11 @@
             <div class="row g-2 mb-4">
                 <div class="col-6">
                     <div class="p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
-                        <label class="text-secondary small d-block mb-1">Skor Urgensi Komposit:</label>
+                        <label class="text-secondary small d-block mb-1">Skor Urgensi:</label>
                         <div class="fs-2 fw-bold {% if hasil.skor_urgensi > 0 %}text-danger{% else %}text-success{% endif %}">
                             {{ hasil.skor_urgensi }}
                         </div>
-                        <small class="text-muted d-block" style="font-size: 0.7rem;">Rerata z-score terhadap acuan kota</small>
+                        <small class="text-muted d-block" style="font-size: 0.7rem;">Dibanding rata-rata kota</small>
                     </div>
                 </div>
                 <div class="col-6">
@@ -179,7 +179,7 @@
             <div class="card p-3 mb-4 rounded-3" style="background-color: var(--rg-primary-light); border: 1px solid var(--rg-primary-subtle);">
                 <div class="d-flex align-items-center gap-2 mb-2">
                     <i class="bi bi-lightbulb-fill fs-5" style="color: var(--rg-primary);"></i>
-                    <h6 class="fw-bold text-dark mb-0">Rekomendasi Intervensi Manajerial:</h6>
+                    <h6 class="fw-bold text-dark mb-0">Usulan Tindakan / Program Dinkes:</h6>
                 </div>
                 <p class="text-dark small mb-0" style="line-height: 1.6;">
                     {{ hasil.usulan_kebijakan }}

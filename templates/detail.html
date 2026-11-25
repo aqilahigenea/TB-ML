@@ -53,9 +53,9 @@
                 {% endif %}
             </div>
 
-            <!-- Skor Urgensi Komposit -->
+            <!-- Skor Urgensi -->
             <div class="mb-4 p-3 rounded-3" style="background-color: #fafbfc; border: 1px solid var(--rg-border);">
-                <label class="text-secondary small d-block mb-1">Skor Urgensi Komposit:</label>
+                <label class="text-secondary small d-block mb-1">Skor Urgensi:</label>
                 <div class="d-flex align-items-baseline gap-2">
                     <span class="fs-1 fw-bold {% if p['Skor_Urgensi'] > 0 %}text-danger{% else %}text-success{% endif %}">
                         {{ p['Skor_Urgensi'] }}
@@ -63,7 +63,7 @@
                     <span class="text-muted small">z-score</span>
                 </div>
                 <small class="text-secondary d-block mt-1" style="font-size: 0.75rem;">
-                    Rata-rata terstandarisasi 5 indikator utama (makin tinggi = makin kritis butuh intervensi).
+                    Dibanding rata-rata kota (makin tinggi = makin butuh penanganan segera).
                 </small>
             </div>
 
@@ -83,7 +83,7 @@
             </div>
 
             <div class="pt-3 border-top">
-                <label class="text-secondary small d-block mb-1">Kepastian Keanggotaan (Bootstrap 300x):</label>
+                <label class="text-secondary small d-block mb-1">Kestabilan Kelompok (Uji 300x):</label>
                 {% if p['Status_Kepastian'] == 'Pasti' %}
                     <span class="badge-status-pasti d-inline-flex align-items-center"><i class="bi bi-shield-check me-1"></i> Pasti (Stabil)</span>
                     <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">Keanggotaan klaster konsisten di atas 70% pengacakan ulang.</small>
@@ -103,7 +103,7 @@
                 <div class="p-1 rounded-circle bg-white text-success shadow-sm" style="color: var(--rg-primary) !important;">
                     <i class="bi bi-lightbulb-fill fs-5"></i>
                 </div>
-                <h5 class="fw-bold text-dark mb-0">Rekomendasi Intervensi Manajerial Dinas Kesehatan</h5>
+                <h5 class="fw-bold text-dark mb-0">Usulan Tindakan / Program Dinkes</h5>
             </div>
             <p class="text-dark mt-2 mb-0" style="line-height: 1.6; font-size: 0.95rem;">
                 {{ p['Usulan_Kebijakan'] }}

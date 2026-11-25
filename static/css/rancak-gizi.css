@@ -5,7 +5,7 @@
   Layout: Fixed Sidebar Kiri + Main Content Kanan
 */
 
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700;800&display=swap');
 
 :root {
   --rg-primary: #14532d;         /* Hijau Tua / Dark Forest Green */
@@ -37,6 +37,7 @@
   --rg-t3-bg: #f0fdf4;
   --rg-t3-text: #15803d;
   --rg-t3-border: #bbf7d0;
+  --bs-body-font-family: 'Lexend', system-ui, -apple-system, sans-serif;
 }
 
 * {
@@ -48,7 +49,7 @@ html {
 }
 
 body {
-  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  font-family: 'Lexend', system-ui, -apple-system, sans-serif;
   background-color: var(--rg-bg);
   color: var(--rg-text-primary);
   letter-spacing: -0.01em;

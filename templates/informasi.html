@@ -63,7 +63,7 @@
                     <i class="bi bi-info-circle-fill text-primary mt-1"></i>
                     <div class="small text-secondary">
                         <strong class="text-dark">Penyempurnaan Melalui Feature Engineering:</strong><br>
-                        Penambahan 3 fitur turunan bermakna domain (<em>Indeks Keparahan Rata-rata</em>, <em>Interaksi Beban Kasus &times; Keparahan</em>, dan <em>Keparahan Antropometri Terburuk</em>) meningkatkan kompleksitas pipeline sekaligus mendongkrak seluruh metrik: Davies-Bouldin Index turun di bawah ambang 1,0 (0,994), Calinski-Harabasz melonjak ke 12,2, ARI antarperiode naik ke 0,63 (dari 0,39), dan stabilitas 300x bootstrap BNBA mencapai 98,6% (ARI 0,96; 24/24 puskesmas Pasti). Puskesmas berkategori ekstrem klinis (Alai, Bungus, Nanggalo) terisolasi bersih ke klaster tersendiri (3 faskes), beban kasus tinggi terkelompok (6 faskes), dan pemantauan rutin posyandu (15 faskes).
+                        Penambahan 3 fitur turunan (<em>Indeks Keparahan Rata-rata</em>, <em>Interaksi Beban Kasus &times; Keparahan</em>, dan <em>Keparahan Antropometri Terburuk</em>) membantu model membedakan tingkat keparahan gizi antar puskesmas secara lebih tajam. Hasilnya, 24 puskesmas terpisah bersih menjadi klaster kondisi paling parah (3 faskes: Alai, Bungus, Nanggalo), klaster beban kasus tinggi (6 faskes), dan klaster pemantauan rutin (15 faskes).
                     </div>
                 </div>
             </div>
@@ -222,20 +222,20 @@
 
             <ul class="text-secondary small mb-0 ps-3" style="line-height: 1.7;">
                 <li class="mb-2">
-                    <strong class="text-dark">Sifat Data Lapangan (Kontinum Tingkat Keparahan):</strong> 
-                    Data riil 24 puskesmas di Kota Padang merupakan sebuah kontinum gradual, bukan kelompok terisolasi seperti dataset sintetis (sejalan dengan riset Dalmaijer et al., 2022 dan studi 30 Puskesmas Gunungkidul oleh Mahardika &amp; Abadi, 2024). Uji reduksi dimensi PCA(2) sebelum K-Means memang menaikkan Silhouette ke 0,553 dengan anggota klaster identik, namun membuang ~30% informasi asli; sehingga model 8 fitur utuh tetap dipertahankan dan dibuktikan melalui DBI &lt; 1,0 (0,994), CH (12,2), serta stabilitas bootstrap BNBA 98,6% (ARI 0,96).
+                    <strong class="text-dark">Sifat Data Lapangan (Kontinum Bertahap):</strong> 
+                    Data riil 24 puskesmas Kota Padang bersifat berkesinambungan (gradual), bukan terpisah tajam seperti data buatan (Dalmaijer et al., 2022; Mahardika &amp; Abadi, 2024). Uji PCA(2) memang menaikkan Silhouette ke 0,553 dengan anggota klaster identik, tetapi membuang ~30% informasi asli sehingga model 8 fitur utuh tetap dipertahankan.
                 </li>
                 <li class="mb-2">
-                    <strong class="text-dark">Penanganan Outlier Tanpa Membuang Data Puskesmas:</strong> 
-                    Puskesmas dengan indikator ekstrem (seperti Alai dengan sangat pendek 44,4% dan Bungus dengan berat tidak naik 50,6%) tidak boleh dibuang karena merupakan wilayah berisiko tinggi yang paling membutuhkan intervensi Dinkes. Dengan penambahan fitur interaksi keparahan, puskesmas ekstrem secara alami terisolasi ke <em>Klaster Prioritas 1</em> tersendiri (3 puskesmas) tanpa mengacaukan klaster beban tinggi (6 puskesmas) dan pemantauan rutin (15 puskesmas).
+                    <strong class="text-dark">Penanganan Data Ekstrem Tanpa Dibuang:</strong> 
+                    Puskesmas dengan angka tertinggi (seperti Alai dan Bungus) tetap dipertahankan karena justru menjadi wilayah paling membutuhkan intervensi Dinkes. Berkat 3 fitur turunan, ketiganya otomatis terpisah rapi ke dalam <em>Klaster Prioritas 1</em> tersendiri (3 puskesmas) tanpa mengacaukan kelompok lainnya.
                 </li>
                 <li class="mb-2">
                     <strong class="text-dark">Konsistensi Lintas Algoritma &amp; Skaler:</strong>
-                    Pada 8 fitur, Hierarchical Ward, Agglomerative Complete, GMM Full, maupun K-Means dengan RobustScaler (Sil 0,325) semuanya menghasilkan pembagian klaster 15 / 6 / 3 yang sama persis. K-Means dipilih untuk aplikasi web karena memiliki metode prediksi langsung untuk data bulanan baru.
+                    Pada 8 fitur, Hierarchical Ward, Agglomerative Complete, GMM Full, maupun K-Means dengan RobustScaler semuanya menghasilkan pembagian klaster 15 / 6 / 3 yang sama persis. K-Means dipilih untuk aplikasi web karena dapat langsung memprediksi data bulanan baru secara cepat.
                 </li>
                 <li>
-                    <strong class="text-dark">Pemantauan Pergeseran Indikator (Data Drift):</strong>
-                    Modul unggah data dilengkapi deteksi deviasi berbasis standar deviasi (SD), mendeteksi anomali jika capaian suatu bulan baru bergeser melampaui &plusmn; 1,0 SD dari data acuan.
+                    <strong class="text-dark">Pemantauan Perubahan Data Bulanan:</strong>
+                    Fitur unggah data dilengkapi deteksi deviasi otomatis berbasis standar deviasi (SD) untuk memberi peringatan jika data bulan baru bergeser melampaui &plusmn; 1,0 SD dari data acuan.
                 </li>
             </ul>
         </div>
