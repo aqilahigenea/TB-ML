@@ -6,11 +6,16 @@ Solusi komprehensif atas catatan dosen:
    - Indeks keparahan rata-rata
    - Interaksi beban kasus x keparahan
    - Keparahan antropometri terburuk
-2. Peningkatan Metrik:
+2. Peningkatan Metrik (Silhouette, DBI, CH dihitung langsung di skrip ini;
+   angka ARI antarperiode, bootstrap 300x, dan Elbow disinkronkan dari
+   notebook Kelompok_8_ML_Stunting.ipynb):
    - Silhouette: 0.268 -> 0.326
    - Davies-Bouldin Index (DBI): 1.234 -> 0.994 (turun di bawah 1.0)
    - Calinski-Harabasz (CH): 8.6 -> 12.2
-   - Stabilitas Bootstrap ARI: 0.63 -> 0.81
+   - ARI Antarperiode: 0.39 -> 0.63 (dari notebook)
+   - Stabilitas Bootstrap BNBA (300x): ARI 0.96 | konsistensi 98.6% | 24/24 Pasti (dari notebook)
+   Catatan: Fitur turunan menekankan keparahan sesuai kebutuhan Dinkes.
+   Metrik naik pada ruang 8 fitur, dan kestabilan naik jelas.
 3. Klasterisasi bermakna & isolasi kelompok ekstrem:
    - Prioritas 1 (Keparahan Ekstrem / Outlier Klinis): 3 puskesmas (Alai, Bungus, Nanggalo)
    - Prioritas 2 (Beban Kasus Tinggi): 6 puskesmas (Ikur Koto, Anak Air, Seberang Padang, Air Tawar, Rawang, Padang Pasir)
@@ -72,7 +77,8 @@ print(f"Silhouette Score      : {sil:.3f}")
 print(f"Davies-Bouldin Index  : {dbi:.3f}")
 print(f"Calinski-Harabasz     : {ch:.1f}")
 
-# Cek klaster Alai & Ikur Koto
+# Pemetaan label klaster memakai puskesmas penanda (ALAI -> Prioritas 1, IKUR KOTO -> Prioritas 2)
+# agar penamaan klaster konsisten dengan profil hasil notebook.
 mapping = {}
 for cluster_id in range(3):
     puskesmas_in_c = df.loc[raw_labels == cluster_id, 'Puskesmas'].tolist()
@@ -117,6 +123,7 @@ paket_model = {
         'silhouette': round(sil, 3),
         'dbi': round(dbi, 3),
         'calinski_harabasz': round(ch, 1),
+        # Angka ARI & bootstrap di bawah disalin manual dari hasil uji notebook Kelompok_8_ML_Stunting.ipynb
         'ari_antarperiode': 0.63,
         'ari_bootstrap': 0.96,
         'konsistensi_bootstrap_persen': 98.6
@@ -134,10 +141,10 @@ df['Kelompok_Prioritas'] = [mapping[c] for c in raw_labels]
 df['Usulan_Kebijakan'] = df['Kelompok_Prioritas'].map(rekomendasi)
 df['Ciri_Kelompok'] = df['Kelompok_Prioritas'].map(ciri)
 
-# Status Kepastian (hasil 300x bootstrap BNBA di Colab: 24/24 Pasti, 98.6% konsisten)
+# Status Kepastian diisi tetap 'Pasti' (disinkronkan dari hasil 300x bootstrap BNBA di notebook: 24/24 Pasti, 98.6% konsisten)
 df['Status_Kepastian'] = 'Pasti'
 
-# Simpan ke Excel (termasuk Kartu_Skor sinkron dengan notebook)
+# Simpan ke Excel (Kartu_Skor: Silhouette/DBI/CH dihitung ulang; Elbow, ARI, & Bootstrap diambil dari notebook)
 df_ks = pd.DataFrame([
     ['1. Silhouette Score', 'Seberapa jelas kelompok terpisah?', f'{sil:.3f}', 'Meningkat / Cukup (Kontinum)'],
     ['2. Davies-Bouldin (DBI)', 'Apakah dispersi internal < jarak antarklaster?', f'{dbi:.3f}', 'Sangat Baik (< 1,0)'],
